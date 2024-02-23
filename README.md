@@ -41,6 +41,14 @@ To get started with Track2Excel, you need to have certain prerequisites installe
 ```bash
 npm install -g @angular/cli@10
 
+//Install the dependencies:
+
+npm install
+
+//Run the application:
+
+ng serve
+```
 
 ## Contributing
 
