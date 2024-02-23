@@ -30,12 +30,22 @@ Create unlimited groups for different projects. Save the most commonly used grou
 
 ## Getting Started
 
-To get started with Track2Excel, [insert instructions here].
+To get started with Track2Excel, you need to have certain prerequisites installed and follow the steps below:
+
+### Prerequisites
+
+- Node.js: The project uses Node.js, a JavaScript runtime. Make sure that you have Node.js version 12 installed, as Angular CLI 10 requires it. You can download it from [here](https://nodejs.org/dist/latest-v12.x/).
+
+- Angular CLI: The project uses Angular CLI for development purposes. Make sure you have Angular CLI version 10 installed. If not, you can install it using the following command:
+
+```bash
+npm install -g @angular/cli@10
+
 
 ## Contributing
 
-We welcome contributions to Track2Excel! [insert instructions on how to contribute here].
+We welcome contributions to Track2Excel!
 
 ## License
 
-[insert license information here]
+Cre
