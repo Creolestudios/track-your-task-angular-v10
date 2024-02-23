@@ -1,11 +1,11 @@
 # track-your-task-angular-v10
 
-Track2Excel is a simple to use task management and todo tracker app. It allows you to collaborate with your team for task management or track your personal todo items. The application is straightforward, effective, and totally free.
+Track your task is a simple to use task management and todo tracker app. It allows you to collaborate with your team for task management or track your personal todo items. The application is straightforward, effective, and totally free.
 
 ## Features
 
 ### Collaborate with Task Management
-Track2Excel is designed to replace your notepad with cool features like recursive tasks and a simple notepad view.
+Track your task is designed to replace your notepad with cool features like recursive tasks and a simple notepad view.
 
 ### TODO Tracker
 Create TODO items in a notepad view and start tracking with reminders. Use it for both personal and official purposes, with many modes of reminders.
@@ -52,5 +52,5 @@ ng serve
 
 ## Contributing
 
-We welcome contributions to Track2Excel!
+We welcome contributions to Track Your Task!
 
