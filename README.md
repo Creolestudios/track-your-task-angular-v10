@@ -54,6 +54,3 @@ ng serve
 
 We welcome contributions to Track2Excel!
 
-## License
-
-Cre
