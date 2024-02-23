@@ -1,0 +1,93 @@
+<!-- <div class="card-header">
+  <h2>Add task <mat-icon color="primary" class="pointer float-right taskIconColor1" matTooltip="Add text copy todo task"
+      (click)="openTextCopyPanel()" style="padding-left: 0.5em;">post_add</mat-icon>
+    <span class=" text-center">
+      <mat-error>{{userErrorMsg}}</mat-error>
+    </span>
+  </h2>
+</div> -->
+<div class="card-body">
+  <form [formGroup]="AddTaskForm" (ngSubmit)="onSubmitAddTask()" novalidate>
+    <div class="form-group">
+      <ng-select [ngClass]="{ 'is-invalid': submitted && a.groupId.errors }" (ngModelChange)="getGroupId($event)"
+        [(ngModel)]="selectedGroupId" formControlName="groupId" bindValue="groupId" bindLabel="groupId"
+        placeholder="Select Group" [searchable]="true" [clearable]="true">
+        <ng-option value="{{g.groupId}}" *ngFor="let g of groupList; let i = index">
+          <option>{{g.groupName}}</option>
+        </ng-option>
+      </ng-select>
+      <mat-error *ngIf="submitted && a.groupId.errors" class="invalid-feedback">
+        <mat-error *ngIf="a.groupId.errors.required">Group is required
+        </mat-error>
+        <mat-error>{{userErrorMsg}}</mat-error>
+      </mat-error>
+    </div>
+    <div class="form-group">
+      <tinymce [ngClass]="{ 'is-invalid': submitted && a.taskDescription.errors }" formControlName="taskDescription"
+        [(ngModel)]="html" [config]="config"></tinymce>
+      <mat-error *ngIf="submitted && a.taskDescription.errors" class="invalid-feedback">
+        <mat-error *ngIf="a.taskDescription.errors.required">Task description is required
+        </mat-error>
+      </mat-error>
+    </div>
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-12 col-sm-12">
+        <section class="example-section">
+          <!--  <input type="checkbox" formControlName="showMasterTaskCheckbox"  data-md-icheck (change)="toggleVisibility($event)"/>-->
+          <mat-checkbox class="example-margin" color="primary" formControlName="showMasterTaskCheckbox" data-md-icheck
+            (change)="toggleVisibilityMastrForm($event)">Recursive Task</mat-checkbox>
+        </section>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-6">
+        <div class="form-group">
+          <mat-datepicker #picker2></mat-datepicker>
+          <input type="text" readonly placeholder="End Due Date" (click)="picker2.open()" formControlName="taskDueDate"
+            matInput [matDatepicker]="picker2" class="form-control inputBorder" />
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-6">
+        <div class="form-group">
+          <ng-select formControlName="userId" bindLabel="userId" placeholder="Select User" [searchable]="true"
+            [clearable]="true">
+            <ng-option value="{{u.userId}}" *ngFor="let u of groupMemberList; let i = index">
+              <option>{{u.userName}}</option>
+            </ng-option>
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="showMasterTaskCheckbox">
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-6">
+          <div class="form-group">
+            <input type="text" autocomplete="off" onlyNumber placeholder="Due days in numbers"
+              (blur)="onDueDaysEvent($event)" formControlName="dueDay" matInput class="form-control inputBorder" />
+            <mat-error class="invalid-feedback">
+              <mat-error *ngIf="onlyNumber">Due Days in numbers is required
+              </mat-error>
+            </mat-error>
+            <mat-error style="font-size: 80%;">{{dueDays}}</mat-error>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-6">
+          <div class="form-group">
+            <ng-select formControlName="frequency" (change)="onfrequencyEvent($event)" [items]="FrequencydataList"
+              bindValue="name" bindLabel="name" placeholder="Select Frequency" [searchable]="true" [clearable]="true">
+            </ng-select>
+            <mat-error style="font-size: 80%;">{{frequency}}</mat-error>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mb-2">
+      <button type="submit" [disabled]="loadingBtn" disabled
+        class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+      <button type="button" (click)="close()" class="btn btn-xs border btn-default text-center">Cancel</button>
+    </div>
+  </form>
+
+</div>
+<!-- <button style="float: right;" type="button" (click)="close()" class="btn btn-xs border btn-default"
+  data-dismiss="modal"> Close</button> -->

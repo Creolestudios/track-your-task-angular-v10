@@ -1,0 +1,10 @@
+<mat-progress-bar *ngIf="netWorkStatusOff" mode="determinate" color="warn" value="100"
+  ></mat-progress-bar>
+  <mat-progress-bar *ngIf="netWorkStatusOn" mode="determinate" color="accent" value="100"
+  ></mat-progress-bar>
+<router-outlet></router-outlet>
+<div class="loading" *ngIf="loading">
+	<i class="fas fa-spin fa-spinner fa-5x"></i>
+</div>
+<tour-step-template></tour-step-template>
+

@@ -1,0 +1,165 @@
+<!-- //borad tab start  -->
+
+<div class="row containerHeight">
+  <div class="col-md-6">
+    <div class="drag-container">
+      <div class="section-headingOpen">Open <span class="widgetCount">{{OpenTaskList.length}}</span></div>
+      <div class="section-headingOpen1"></div>
+      <div cdkDropList id="openList" #openList="cdkDropList" [cdkDropListData]="OpenTaskList"
+        [cdkDropListConnectedTo]="[progresList,openList]" class="item-list MyAssigTaskList"
+        (cdkDropListDropped)="drop($event)">
+        <div class="item-box" *ngFor="let t of OpenTaskList ; let i=index" cdkDrag>
+          <pre (click)="getTaskDetailsById(t.taskId)" class="desc-space"
+            [innerHTML]="(add3Dots(t.taskDescription,350)) |  noSanitize">{{add3Dots(t.taskDescription,350)}}</pre>
+
+          <div class="row myTaskOption">
+            <div class="col-2">
+              <div class="dueDatemyTask" *ngIf="t.taskDueDate === null else showDeuDate">- - -</div>
+              <ng-template #showDeuDate>
+                <div class="dueDatemyTask">{{t.taskDueDate | date: 'MMM dd'}}</div>
+              </ng-template>
+            </div>
+            <div class="col-3">
+              <mat-chip #ddTrigger="matMenuTrigger" [ngClass]="{
+                  'inProgressstatus':t.taskStatus == 'In Progress'
+                }" [matMenuTriggerFor]="ss" (click)="taskStatusValue(t)"
+                class="myTaskChip chipColorStatus chipShadow taskOption mr-2" selected>{{t.taskStatus}}
+              </mat-chip>
+              <mat-menu #ss="matMenu" [overlapTrigger]="false">
+                <div (click)="cancelRemoveClick($event)" class="userStatusDropDown">
+                  <ng-select [items]="dataList" bindValue="name" (change)="getTaskStatusValue($event,t)"
+                    bindLabel="name" placeholder="Select status" [searchable]="true" [clearable]="false"
+                    [(ngModel)]="selectedStatus">
+                  </ng-select>
+                </div>
+              </mat-menu>
+            </div>
+            <div class="col-2">
+              <div class="center-vertically">
+                <span class="userIcon" matTooltipClass='user-tooltip' matTooltip="{{tooltipUserName}}"
+                  [tooltip]="getUserNameTooltip(t)" matTooltip="Assign user">
+                  {{t.userName | shortName}}</span>
+              </div>
+              <!-- <mat-menu #aa="matMenu" [overlapTrigger]="false">
+                <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+                  <ng-select (change)="taskUserChangeByUser($event,t)" bindLabel="userName" placeholder="Select User"
+                    [searchable]="true" [clearable]="false" [(ngModel)]="selectedUser">
+                    <ng-option value="{{item.userId}}" *ngFor="let item of groupMemberData">
+                      {{item.userName}}
+                    </ng-option>
+                      <ng-option value="">
+                      No assignee
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </mat-menu> -->
+              <!-- <ng-template #showUserMsg>
+                <div class="center-vertically">
+                  <mat-icon class="delete2 defaultIconsClr mt-1" (click)="taskUserChange(t)" #ddTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="aa" matTooltip="Assign user">
+                    person</mat-icon>
+                </div>
+              </ng-template> -->
+            </div>
+            <div class="col-5">
+              <div class="taskGroupName">{{t.groupName}}</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-md-6">
+    <div class="drag-container">
+      <div class="section-headingInprogres">In Progress <span class="widgetCount">{{InProgressTaskList.length}}</span></div>
+      <div class="section-headingInprogres1"></div>
+      <div cdkDropList id="progresList" #progresList="cdkDropList" [cdkDropListData]="InProgressTaskList"
+        [cdkDropListConnectedTo]="[openList,progresList]" class="item-list MyAssigTaskList"
+        (cdkDropListDropped)="drop($event)">
+        <div class="item-box " *ngFor="let t of InProgressTaskList; let i=index" cdkDrag>
+          <pre (click)="getTaskDetailsById(t.taskId)" class="desc-space"
+            [innerHTML]="(add3Dots(t.taskDescription,350)) |  noSanitize">{{add3Dots(t.taskDescription,350)}}</pre>
+          <div class="row myTaskOption">
+            <div class="col-2">
+              <div class="dueDatemyTask" *ngIf="t.taskDueDate === null else showDeuDate">- - -</div>
+              <ng-template #showDeuDate>
+                <div class="dueDatemyTask">{{t.taskDueDate | date: 'MMM dd'}}</div>
+              </ng-template>
+            </div>
+            <div class="col-3">
+              <mat-chip #ddTrigger="matMenuTrigger" [ngClass]="{
+                  'inProgressstatus':t.taskStatus == 'In Progress'
+                }" [matMenuTriggerFor]="ss" (click)="taskStatusValue(t)"
+                class="myTaskChip chipColorStatus chipShadow taskOption mr-2" selected>{{t.taskStatus}}
+              </mat-chip>
+              <mat-menu #ss="matMenu" [overlapTrigger]="false">
+                <div (click)="cancelRemoveClick($event)" class="userStatusDropDown">
+                  <ng-select [items]="dataList" bindValue="name" (change)="getTaskStatusValue($event,t)"
+                    bindLabel="name" placeholder="Select status" [searchable]="true" [clearable]="false"
+                    [(ngModel)]="selectedStatus">
+                  </ng-select>
+                </div>
+              </mat-menu>
+            </div>
+            <div class="col-2">
+              <div class="center-vertically" *ngIf="t.userName else showUserMsg">
+                <span class="userIcon" matTooltipClass='user-tooltip' matTooltip="{{tooltipUserName}}"
+                  [tooltip]="getUserNameTooltip(t)" matTooltip="Assign user" #trigger="matMenuTrigger"
+                  [matMenuTriggerFor]="aa" (click)="taskUserChange(t)">
+                  {{t.userName | shortName}}</span>
+              </div>
+              <mat-menu #aa="matMenu" [overlapTrigger]="false">
+                <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+                  <ng-select
+                    (change)="taskUserChangeByUser($event, t.taskId, t.taskDescription,t.taskStatus,t.taskDueDate)"
+                    bindLabel="userName" placeholder="Select User" [searchable]="true" [clearable]="false"
+                    [(ngModel)]="selectedUser">
+                    <ng-option value="{{item.userId}}" *ngFor="let item of groupMemberData">
+                      {{item.userName}}
+                    </ng-option>
+                    <!-- <ng-option value="">
+                      No assignee
+                    </ng-option> -->
+                  </ng-select>
+                </div>
+              </mat-menu>
+              <ng-template #showUserMsg>
+                <div class="center-vertically">
+                  <mat-icon class="delete2 defaultIconsClr mt-1" (click)="taskUserChange(t)" #ddTrigger="matMenuTrigger"
+                    [matMenuTriggerFor]="aa" matTooltip="Assign user">
+                    person</mat-icon>
+                </div>
+              </ng-template>
+            </div>
+            <div class="col-5">
+              <div class="taskGroupName">{{t.groupName}}</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="col-md-4">
+
+    <div class="drag-container">
+                                    <div class="section-headingDone" >Done</div>
+                                    <div class="section-headingDone1" ></div>
+                                    <div cdkDropList id="doneList" #doneList="cdkDropList" [cdkDropListData]="DoneTaskList"
+                                      [cdkDropListConnectedTo]="[progresList,openList]" class="item-list"
+                                      (cdkDropListDropped)="drop($event)">
+                                      <div class="item-box"
+                                        *ngFor="let t of DoneTaskList; let i=index"
+                                        cdkDrag>
+                                        <pre (click)="editTaskDialog(t)" class="desc-space"
+                                          [innerHTML]="(add3Dots(t.name,250)) |  noSanitize">{{add3Dots(t.name,250)}} </pre>
+                                      </div>
+
+                                    </div>
+                                  </div>
+  </div> -->
+</div>
+<!-- //borad tab end  -->

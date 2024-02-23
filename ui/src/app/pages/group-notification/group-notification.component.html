@@ -1,0 +1,72 @@
+<app-menu></app-menu>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+    </div>
+
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="card updateProfile">
+        <div class="card-body ">
+          <h5 class="card-title">
+            <div class="row" >
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="input-group mb-4 border rounded-pill p-1">
+                  <div class="input-group-prepend border-0">
+                    <button id="button-addon4" type="button" class="btn btn-link text-primary">
+                      <i class="fa fa-search iconColor"></i>
+                    </button>
+                  </div>
+                  <input type="search" placeholder="Search Invitation message" [(ngModel)]="term"
+                    aria-describedby="button-addon4" class="form-control bg-none border-0" />
+                </div>
+              </div>
+
+            </div>
+          </h5>
+          <div class="table-responsive scrollbar invitationFixedHeight" style="overflow-x:auto;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Invitation message</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of receivedGroupInvitationsList | filter:term">
+                  <td>
+                    <mat-card-subtitle>{{r.invitedByUserName}}
+                      has invited to <span style="font-weight: bold;margin-right:20px"> {{(r.groupName)}} </span>
+                    </mat-card-subtitle>
+                  </td>
+                  <td>{{ r.createdAt | date}}</td>
+                  <td>
+                    <div class="" *ngIf="r.isAccepted == false && r.isRejected == false  else elseBlockaccept">
+                      <button mat-button color="primary"
+                        (click)="acceptInvitation(r. groupInvitationId, r.isAccepted)">Accept</button>
+                      <button mat-button color="warn"
+                        (click)="rejectInvitation(r. groupInvitationId, r.isRejected)">Reject</button>
+                    </div>
+                    <ng-template #elseBlockaccept>
+                      <div *ngIf="r.isAccepted == true else elseBlock">
+                        <p mat-button style="color:#08d608" color="primary">Invitation accepted </p>
+                      </div>
+                      <ng-template #elseBlock>
+                        <p mat-button style="color:#ff0808" color="warn">Invitation rejected </p>
+                      </ng-template>
+                    </ng-template>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="errrMsg" *ngIf="(message)">No invitation found</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- col-xl-12 end-->
+  </div>
+  <!-- row end-->
+</div>
+<!-- container-fluid end-->

@@ -1,0 +1,182 @@
+<div class="container-fluid">
+  <mat-card class="commentHeader">Group Name <span >
+      <mat-icon class="closedIcon">close</mat-icon>
+    </span></mat-card>
+  <!-- <div class="row">
+    <div class="col-6">
+      <mat-card>Simple card</mat-card>
+    </div>
+    <div class="col-6">
+      <mat-card>Simple card</mat-card>
+    </div>
+  </div> -->
+
+  <div class="row no-gutters">
+    <div class="col-12 ">
+      <mat-card>Simple card <p>x</p></mat-card>
+    </div>
+  </div>
+
+  <div class="row no-gutters">
+    <div class="col-6 ml-0">
+      <form [formGroup]="addCommentForm" (ngSubmit)="saveComment()" (keydown.enter)="$event.preventDefault()">
+        <div class="form-group">
+          <tinymce [(ngModel)]="html" [config]="config">
+          </tinymce>
+        </div>
+
+
+        <button type="submit" [disabled]="loadingBtn" disabled
+          class="btn btn-xs border btn-default mr-1 track-btn-blue">
+          Save
+        </button>
+
+      </form>
+    </div>
+    <div class="col-6 card-body inner-div comment-line">
+      <ul class="list-unstyled task-comment-box">
+
+        <li class="media my-4" (mouseenter)="mouseEnter() " (mouseleave)="mouseLeave()">
+          <div class="center-vertically mr-3">
+            <span class="userIcon">Adil</span>
+          </div>
+          <div class="media-body comment-msg" [hidden]="msgEditModel">
+            <h5 class="mt-0 mb-1">You commented <span class="float-right comment-date" [hidden]="iconVisible">Apr 26 at
+                12:09 pm</span> <span class="float-right comment-edit" [hidden]="!iconVisible">
+                <mat-icon (click)="updateComment()">edit</mat-icon>
+              </span></h5>
+            These utility classes float an element to the left or right, or disable floating, based on the current
+            viewport size using the
+          </div>
+
+          <div [hidden]="!msgEditModel" class="media-body comment-msg">
+            <textarea class="ta10em">{{editModelMsg}}</textarea>
+            <div class="text-center mb-2">
+              <button class="comment-savebtn" mat-stroked-button color="primary">Save</button>
+              <button class="comment-savebtn" mat-stroked-button>Cancel</button>
+              <!-- <button type="submit" [disabled]="loadingBtn" disabled
+                class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+              <button type="button" (click)="close()" class="btn btn-xs border btn-default text-center">Cancel</button> -->
+            </div>
+          </div>
+        </li>
+
+
+        <li class="media my-4" (mouseenter)="mouseEnter() " (mouseleave)="mouseLeave()">
+          <div class="center-vertically mr-3">
+            <span class="userIcon">Adil</span>
+          </div>
+          <div class="media-body comment-msg" [hidden]="msgEditModel">
+            <h5 class="mt-0 mb-1">You commented <span class="float-right comment-date" [hidden]="iconVisible">Apr 26 at
+                12:09 pm</span> <span class="float-right comment-edit" [hidden]="!iconVisible">
+                <mat-icon (click)="updateComment()">edit</mat-icon>
+              </span></h5>
+            These utility classes float an element to the left or right, or disable floating, based on the current
+            viewport size using the
+          </div>
+
+          <div [hidden]="!msgEditModel" class="media-body comment-msg">
+            <textarea class="ta10em">{{editModelMsg}}</textarea>
+            <div class="text-center mb-2">
+              <button class="comment-savebtn" mat-stroked-button color="primary">Save</button>
+              <button class="comment-savebtn" mat-stroked-button>Cancel</button>
+              <!-- <button type="submit" [disabled]="loadingBtn" disabled
+                class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+              <button type="button" (click)="close()" class="btn btn-xs border btn-default text-center">Cancel</button> -->
+            </div>
+          </div>
+        </li>
+        <li class="media my-4" (mouseenter)="mouseEnter() " (mouseleave)="mouseLeave()">
+          <div class="center-vertically mr-3">
+            <span class="userIcon">Adil</span>
+          </div>
+          <div class="media-body comment-msg" [hidden]="msgEditModel">
+            <h5 class="mt-0 mb-1">You commented <span class="float-right comment-date" [hidden]="iconVisible">Apr 26 at
+                12:09 pm</span> <span class="float-right comment-edit" [hidden]="!iconVisible">
+                <mat-icon (click)="updateComment()">edit</mat-icon>
+              </span></h5>
+            These utility classes float an element to the left or right, or disable floating, based on the current
+            viewport size using the
+          </div>
+
+          <div [hidden]="!msgEditModel" class="media-body comment-msg">
+            <textarea class="ta10em">{{editModelMsg}}</textarea>
+            <div class="text-center mb-2">
+              <button class="comment-savebtn" mat-stroked-button color="primary">Save</button>
+              <button class="comment-savebtn" mat-stroked-button>Cancel</button>
+              <!-- <button type="submit" [disabled]="loadingBtn" disabled
+                class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+              <button type="button" (click)="close()" class="btn btn-xs border btn-default text-center">Cancel</button> -->
+            </div>
+          </div>
+        </li>
+        <li class="media my-4" (mouseenter)="mouseEnter() " (mouseleave)="mouseLeave()">
+          <div class="center-vertically mr-3">
+            <span class="userIcon">Adil</span>
+          </div>
+          <div class="media-body comment-msg" [hidden]="msgEditModel">
+            <h5 class="mt-0 mb-1">You commented <span class="float-right comment-date" [hidden]="iconVisible">Apr 26 at
+                12:09 pm</span> <span class="float-right comment-edit" [hidden]="!iconVisible">
+                <mat-icon (click)="updateComment()">edit</mat-icon>
+              </span></h5>
+            These utility classes float an element to the left or right, or disable floating, based on the current
+            viewport size using the
+          </div>
+
+          <div [hidden]="!msgEditModel" class="media-body comment-msg">
+            <textarea class="ta10em">{{editModelMsg}}</textarea>
+            <div class="text-center mb-2">
+              <button class="comment-savebtn" mat-stroked-button color="primary">Save</button>
+              <button class="comment-savebtn" mat-stroked-button>Cancel</button>
+              <!-- <button type="submit" [disabled]="loadingBtn" disabled
+                class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+              <button type="button" (click)="close()" class="btn btn-xs border btn-default text-center">Cancel</button> -->
+            </div>
+          </div>
+        </li>
+        <li class="media my-4" (mouseenter)="mouseEnter() " (mouseleave)="mouseLeave()">
+          <div class="center-vertically mr-3">
+            <span class="userIcon">Adil</span>
+          </div>
+          <div class="media-body comment-msg" [hidden]="msgEditModel">
+            <h5 class="mt-0 mb-1">You commented <span class="float-right comment-date" [hidden]="iconVisible">Apr 26 at
+                12:09 pm</span> <span class="float-right comment-edit" [hidden]="!iconVisible">
+                <mat-icon (click)="updateComment()">edit</mat-icon>
+              </span></h5>
+            These utility classes float an element to the left or right, or disable floating, based on the current
+            viewport size using the
+          </div>
+
+          <div [hidden]="!msgEditModel" class="media-body comment-msg">
+            <textarea class="ta10em">{{editModelMsg}}</textarea>
+            <div class="text-center mb-2">
+              <button type="button" class="comment-savebtn" mat-stroked-button color="primary">Save</button>
+              <button type="button" class="comment-savebtn" mat-stroked-button (click)="cancelComment()">Cancel</button>
+              <!-- <button type="submit" [disabled]="loadingBtn" disabled
+                class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+              <button type="button" (click)="close()" class="btn btn-xs border btn-default text-center">Cancel</button> -->
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <form [formGroup]="addCommentForm" (ngSubmit)="saveComment()" (keydown.enter)="$event.preventDefault()">
+        <div class="form-group">
+          <tinymce [(ngModel)]="html" [config]="config">
+          </tinymce>
+          <!-- <mat-error *ngIf="submitted && g.taskDescription.errors" class="invalid-feedback">
+            <mat-error *ngIf="g.taskDescription.errors.required">Task
+              description is required</mat-error>
+          </mat-error> -->
+        </div>
+
+
+        <button type="submit" [disabled]="loadingBtn" disabled
+          class="btn btn-xs border btn-default mr-1 track-btn-blue">
+          Save
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>

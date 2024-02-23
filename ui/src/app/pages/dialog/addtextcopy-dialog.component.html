@@ -1,0 +1,95 @@
+<mat-tab-group mat-align-tabs="start">
+  <mat-tab label="Text  task">
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">text_snippet</mat-icon>&nbsp;
+      Text task
+    </ng-template>
+    <div class="card-body">
+      <form [formGroup]="textToTextForm" (ngSubmit)="addTextToTextTask(textToTextForm)">
+        <div class="row">
+          <div class="col-xl-10 col-lg-10 col-md-10 col-10 col-sm-8">
+            <div class="form-group">
+              <ng-select [(ngModel)]="selected" (ngModelChange)="getGroupMembers($event)"
+                [ngClass]="{ 'is-invalid': textTotextsubmitted && t.groupId.errors }" formControlName="groupId"
+                bindValue="groupId" bindLabel="groupId" placeholder="Select Group" [searchable]="true"
+                [clearable]="true">
+                <ng-option value="{{g.groupId}}" *ngFor="let g of groupList; let i = index">
+                  <option>{{g.groupName}}</option>
+                </ng-option>
+              </ng-select>
+              <mat-error *ngIf="textTotextsubmitted && t.groupId.errors" class="invalid-feedback">
+                <mat-error *ngIf="t.groupId.errors.required">Group is required
+                </mat-error>
+              </mat-error>
+            </div>
+          </div>
+          <div class="col-xl-1 col-lg-1 col-md-1 col-2 col-sm-4">
+            <span
+              matTooltip="This is my Task @d 21/04/21 @a example@domain.com @e
+            As above is sample format to add multiple task. Format description as blow
+            Task description @d means date with format in dd/mm/yyyy, @a task assignee email @e means end of task. Date and assignee are optional"
+              class="material-icons-outlined">
+              <i class="material-icons">info</i>
+            </span>
+          </div>
+        </div>
+        <div class="form-group">
+          <textarea [(ngModel)]="taskText" id="taskText" (keypress)="eventHandler($event)" [mention]="items"
+            [mentionConfig]="mentionConfig" [ngClass]="{ 'is-invalid': textTotextsubmitted && t.taskText.errors }"
+            class="form-control inputBorder textareaTextCopy textarea multi_lines_text" formControlName="taskText"
+            rows="8" cols="50" placeholder="This is my Task @d 21/04/21 @a example@domain.com @e
+    This is my Task @d 21/04/21  @e etc "></textarea>
+          <mat-error *ngIf="textTotextsubmitted && t.taskText.errors" class="invalid-feedback">
+            <mat-error *ngIf="t.taskText.errors.required">Formated text is required
+            </mat-error>
+          </mat-error>
+        </div>
+        <div class="text-center mb-2">
+          <button type="submit" [disabled]="loadingBtn" disabled
+            class=" btn btn-xs border btn-default mr-1 track-btn-blue">
+            Save
+          </button>
+          <button type="button" (click)="close()" class="btn btn-xs border btn-default">Cancel</button>
+        </div>
+
+      </form>
+    </div>
+  </mat-tab>
+
+  <!-- ---------tab second start---- -->
+  <mat-tab label="Upload File">
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">file_upload</mat-icon>&nbsp;
+      Upload File
+    </ng-template>
+
+    <div class="card-body">
+      <form [formGroup]="textToTextForm" (ngSubmit)="addTextToTextTask(textToTextForm)">
+        <div class="row">
+          <div class="col-xl-7 col-lg-7 col-md-7 col-7 col-sm-7">
+            <div class="form-group">
+              <ng-select [(ngModel)]="selected" (ngModelChange)="getGroupMembers($event)"
+                [ngClass]="{ 'is-invalid': textTotextsubmitted && t.groupId.errors }" formControlName="groupId"
+                bindValue="groupId" bindLabel="groupId" placeholder="Select Group" [searchable]="true"
+                [clearable]="true">
+                <ng-option value="{{g.groupId}}" *ngFor="let g of groupList; let i = index">
+                  <option>{{g.groupName}}</option>
+                </ng-option>
+              </ng-select>
+              <mat-error *ngIf="errorMsg">{{errorMsg}}</mat-error>
+            </div>
+          </div>
+          <div class="col-xl-5 col-lg-5 col-md-5 col-5 col-sm-5">
+            <div class="form-group">
+              <input type="hidden" name="hiddenInput" id="hiddenInput" value="" />
+              <input accept="text/plain" type="file" #fileUploader (change)="textFileReadTask($event)">
+            </div>
+          </div>
+        </div>
+        <div class="text-center mb-2">
+          <button type="button" (click)="close()" class="btn btn-xs border btn-default">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </mat-tab>
+</mat-tab-group>

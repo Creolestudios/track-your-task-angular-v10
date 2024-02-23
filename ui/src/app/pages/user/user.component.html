@@ -1,0 +1,139 @@
+<app-menu></app-menu>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+      <div class="card  mb-3">
+        <div class="card-body user-search">
+          <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+              <div class="row">
+                <div class="col-lg-11 col-md-11 col-xs-11">
+                  <h2 style="display: inline"></h2>
+                </div>
+                <div class="col-lg-2 col-md-2 col-xs-2"></div>
+              </div>
+
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+              <div class="row">
+                <div class="col-xl-8 col-lg-8 col-md-8 d-xl-block d-lg-block d-md-block "></div>
+                <div class="mt-3 d-xl-none d-lg-none d-md-none d-sm-block d-block col-8 col-sm-8 "></div>
+                <div class="col-1 pointer">
+                  <mat-icon color="primary" class=" pointer taskIconColor" (click)="searchBar()"
+                    matTooltip="Search user">search
+                  </mat-icon>
+                </div>
+                <div class="col-1 pointer">
+                  <mat-icon color="primary" class=" pointer taskIconColor" data-toggle="modal"
+                    data-target="#exampleModal" matTooltip="Invite user">person_add</mat-icon>
+                </div>
+                <div class="col-1 pointer"></div>
+                <div class="col-1 pointer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="card updateProfile">
+        <div class="card-body">
+          <h5 class="card-title">
+            <div class="row" *ngIf="(searchUsers)">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="input-group mb-4 border rounded-pill p-1">
+                  <div class="input-group-prepend border-0">
+                    <button id="button-addon4" type="button" class="btn btn-link text-primary">
+                      <i class="fa fa-search iconColor"></i>
+                    </button>
+                  </div>
+                  <input type="search" [(ngModel)]="term" placeholder="Search user" aria-describedby="button-addon4"
+                    class="form-control bg-none border-0" />
+                </div>
+              </div>
+
+            </div>
+          </h5>
+          <div class="table-responsive scrollbar invitationFixedHeight">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">User name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Role</th>
+                  <!-- <th scope="col">Action</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of userdata |  filter:term">
+                  <td>{{ user.userName }}</td>
+                  <td>{{ user.userEmail }}</td>
+                  <td>{{ user.role }}</td>
+                  <!-- <td>{{ user.role }}</td>-->
+                </tr>
+              </tbody>
+            </table>
+            <p class="errrMsg" *ngIf="(message)">No user found</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- col-xl-12 end-->
+  </div>
+  <!-- row end-->
+</div>
+<!-- container-fluid end-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+  data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header headerBottomClr">
+        <h3 class="modal-title" id="exampleModalLabel">Invite Users</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="inviteUsersCloseButton()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <form [formGroup]="inviteUsersForm" (ngSubmit)="onSubmit(inviteUsersForm)">
+              <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                  <div class="form-group row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                      <label for="First Name">User Emails </label>
+                    </div>
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                      <input type="type" formControlName="usersEmail" required
+                        [ngClass]="{'is-invalid':submittedUser && f.usersEmail.errors }"
+                        placeholder="Enter User emails with comma separate" aria-describedby="button-addon4"
+                        class="form-control bg-none" />
+                      <mat-error *ngIf="submittedUser && f.usersEmail.errors" class="invalid-feedback">
+                        <mat-error *ngIf="f.usersEmail.errors.required">User email is required</mat-error>
+                        <mat-error *ngIf="f.usersEmail.errors.isArrayOfEmails">User email with comma is required
+                        </mat-error>
+                        <mat-error *ngIf="f.usersEmail.errors.isEmail">Invalid email </mat-error>
+                        <mat-error *ngIf="f.usersEmail.errors.pattern">Invalid email </mat-error>
+                      </mat-error>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button [disabled]="loadingBtn" disabled type="button" (click)="onSubmit(inviteUsersForm)"
+                  class="btn btn-xs border btn-default track-btn-blue ml-1"> Invite </button>
+                <button type="button" class="btn btn-xs border btn-default" data-dismiss="modal"
+                  (click)="inviteUsersCloseButton()"> Close </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

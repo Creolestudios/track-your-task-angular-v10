@@ -1,0 +1,60 @@
+<div class="card">
+  <div class="card-body cardHeight">
+    <h5 class="card-title  userDropDown">
+      <div class="row">
+
+        <div class="col-xl-4 col-lg-4 col-md-4  col-sm-12 col-12 pt-2">
+          <span class="myTaskLabel ">My
+            Tasks</span>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2">
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-6  col-sm-12 col-12 float-right">
+          <ng-select bindLabel="groupId" placeholder="Select Group" (ngModelChange)="getSelectedGroupId($event)"
+            [(ngModel)]="globalSelectedGroup" [searchable]="true" [clearable]="true">
+            <ng-option value="{{g.groupId}}" *ngFor="let g of groupList; let i = index">
+              <option>{{g.groupName}}</option>
+            </ng-option>
+          </ng-select>
+        </div>
+      </div>
+    </h5>
+    <ng-container>
+      <input type="search" *ngIf="(!errorMesg)" placeholder="Search task" [(ngModel)]="taskSearch" name="search"
+        autocomplete="off" aria-describedby="button-addon4" class="form-control bg-none input-group-sm">
+      <div class="myTaskList">
+        <div class="list-group mt-2" *ngFor="let t of myTaskList | filter: taskSearch; let i=index"
+          [class.overDueTask]="t.isTaskOverDue == true">
+          <div *ngIf="t.taskStatus != 'Done'">
+            <a class="list-group-item list-group-item-action flex-column align-items-start taskListfont">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1"></h5>
+                <!-- <small> <mat-chip [class.overDueColor]="t.isTaskOverDue == true" class="myTaskChip chilColorDueDate"  selected>{{t.taskDueDate ? (t.taskDueDate | date: 'MMM dd') : '-  -'}}</mat-chip></small> -->
+              </div>
+              <p (click)="getTaskDetailsById(t.taskId)" class="mb-1 taskOption"
+                [innerHTML]="(add3Dots(t.taskDescription,150)) |  noSanitize">{{add3Dots(t.taskDescription,150)}}
+              </p>
+              <small>
+                <mat-chip #ddTrigger="matMenuTrigger" [ngClass]="{
+                'inProgressstatus':t.taskStatus == 'In Progress'
+              }" [matMenuTriggerFor]="ss" (click)="taskStatusValue(t)"
+                  class="myTaskChip chipColorStatus chipShadow taskOption mr-2" selected>{{t.taskStatus}}
+                </mat-chip>
+                <mat-chip [class.overDueColor]="t.isTaskOverDue == true" class="myTaskChip chipColorDueDate" selected>
+                  {{t.taskDueDate ? (t.taskDueDate | date: 'MMM dd') : '- -'}}</mat-chip>
+              </small>
+            </a>
+          </div>
+          <mat-menu #ss="matMenu" [overlapTrigger]="false">
+            <div (click)="cancelRemoveClick($event)" class="userStatusDropDown">
+              <ng-select [items]="dataList" bindValue="name" (change)="getTaskStatusValue($event,t)" bindLabel="name"
+                placeholder="Select status" [searchable]="true" [clearable]="false" [(ngModel)]="selectedStatus">
+              </ng-select>
+            </div>
+          </mat-menu>
+        </div>
+        <p class="taskError" *ngIf="(errorMesg)">No task found</p>
+      </div>
+    </ng-container>
+  </div>
+</div>

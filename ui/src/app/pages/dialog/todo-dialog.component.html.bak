@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-lg-12">
+        <mat-card-content>
+            <mat-card-subtitle class="taskDesc">Description</mat-card-subtitle>
+            <div class="card-body inner-div" [ngClass]="taskClassDescription?'task-description-box':''">
+                <pre *ngIf="taskDescription" [innerHTML]="taskDescription |  noSanitize">{{taskDescription || "" }} </pre>
+            </div>
+        </mat-card-content>
+    </div>
+
+</div>
+<div class="card-body">
+    <mat-card-content>
+        <h4 class="">
+            <mat-card-subtitle class="taskDesc1">Details <span class="float-right">
+                    <mat-card-subtitle>
+                        <small> Created By   <span class="userInfoColor">{{createdBy}}</span> At <span class="userInfoColor">{{createdAt | date}}</span>
+                        </small>
+                    </mat-card-subtitle>
+                </span>
+            </mat-card-subtitle>
+        </h4>
+    </mat-card-content>
+    <div class="row">
+        <div class="col-lg-4 col-xl-4  col-md-6 col-sm-5 col-12 infoinLIne">
+            <mat-icon aria-hidden="false" matTooltip="Task status" class="taskIconColor" color="primary" aria-label="Example home icon">task</mat-icon>
+            <span class="iconsPadding" matTooltip="Task status"
+                [ngClass]="{'taskOpen':taskStatus == 'Open', 'taskDone':taskStatus == 'Done', 'testInprogress':taskStatus == 'In Progress' }">{{taskStatus}}</span>
+        </div>
+        <div class="col-lg-4 col-xl-4  col-md-6 col-sm-5 col-12 infoinLIne">
+            <mat-icon aria-hidden="false" matTooltip="Due date" [class.overDueColor]="isTaskOverDue == true"   class="taskIconColor" color="primary" aria-label="Example home icon">today</mat-icon>
+            <span class="iconsPadding" matTooltip="Due date" [class.overDueColor]="isTaskOverDue == true" >{{taskDueDate}}</span>
+        </div>
+        <div class="col-lg-4 col-xl-4  col-md-6 col-sm-5 col-12 infoinLIne">
+            <mat-icon aria-hidden="false" matTooltip="Assign user"  class="taskIconColor" color="primary" aria-label="Example home icon">person</mat-icon>
+            <span class="iconsPadding" matTooltip="Assign user">{{userName}}</span>
+        </div>
+    </div>
+</div>
+<button style="float: right;" type="button" (click)="close()" class="btn btn-xs border btn-default"
+    data-dismiss="modal"> Close</button>

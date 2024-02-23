@@ -1,0 +1,97 @@
+<div class="signin-content">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-heading header-text">
+                <img src="assets/img/Logo.png" alt="Track2Ecxel" />
+            </div>
+            <hr class="header-border">
+            <div class="modal-body">
+                <div class="text-center">
+                    <h3>Please register to continue</h3>
+                </div>
+                <form [formGroup]="signUpForm" (ngSubmit)="onSubmit(signUpForm)" role="form">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </span>
+                            <input type="text" class="form-control" placeholder="User email" formControlName="userEmail"
+                                required [ngClass]="{ 'is-invalid': submitted && f.userEmail.errors }" />
+                            <mat-error *ngIf="submitted && f.userEmail.errors" class="invalid-feedback">
+                                <mat-error *ngIf="f.userEmail.errors.required">User email is required</mat-error>
+                            </mat-error>
+                            <mat-error *ngIf="submitted && f.userEmail.errors" class="invalid-feedback">
+                                <mat-error *ngIf="f.userEmail.errors.pattern">Email must be a valid email address
+                                </mat-error>
+                            </mat-error>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </span>
+                            <input type="text" class="form-control" placeholder="Display name"
+                                formControlName="userName" required
+                                [ngClass]="{ 'is-invalid': submitted && f.userName.errors }" />
+                            <mat-error *ngIf="submitted && f.userName.errors" class="invalid-feedback">
+                                <mat-error *ngIf="f.userName.errors.required">User Name is required</mat-error>
+                            </mat-error>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-lock"></span>
+                            </span>
+                            <input type="password" class="form-control" [type]="fieldTextType ? 'text':'password' " formControlName="password"
+                                required [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                                placeholder="Password" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                     
+                                      <i class="fa" [ngClass]="{'fa-eye-slash': !fieldTextType,'fa-eye': fieldTextType}" (click)="toggleFieldTextType()">  </i>
+                                    </span>
+                                  </div>
+                            <mat-error *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                <mat-error *ngIf="f.password.errors.required">Password is required</mat-error>
+                                <mat-error *ngIf="f.password.errors.pattern">Password must contain at least 6 in
+                                    length and 1 Lowercase , Uppercase , Numbers, & Special characters.
+                                </mat-error>
+                            </mat-error>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-lock"></span>
+                            </span>
+                            <input type="password" class="form-control" [type]="fieldTextType ? 'text':'password' " formControlName="password2"
+                                required [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                                placeholder="Confirm Password"/>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                     
+                                      <i class="fa" [ngClass]="{'fa-eye-slash': !fieldTextType,'fa-eye': fieldTextType}" (click)="toggleFieldTextType()">  </i>
+                                    </span>
+                                  </div>
+                                 
+                           
+                        </div>
+
+                    </div>
+
+                    <div class="form-group text-center">
+                        <div class="box bg-1">
+                            <button type="submit" [disabled]="loadingBtn" disabled
+                                class="btn btn-xs border btn-default mr-1 track-btn-blue btn-md">Register</button>
+                        </div>
+                        <a href="javascript:void(0)" routerLink="/login" class="btn btn-link">Back to login</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

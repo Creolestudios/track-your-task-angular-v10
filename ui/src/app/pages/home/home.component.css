@@ -1,0 +1,41 @@
+/* @import url('../../../assets/asset/css/plugins/bootstrap.min.css'); */
+@import url('../../../assets/asset/css/plugins/animate.min.css');
+@import url('../../../assets/asset/css/plugins/fontawesome.css');
+@import url('../../../assets/asset/css/plugins/modal-video.min.css');
+@import url('../../../assets/asset/css/plugins/owl.carousel.css');
+@import url('../../../assets/asset/css/plugins/slicknav.css');
+@import url('../../../assets/asset/css/plugins/loader.css');
+@import url('../../../assets/asset/css/plugins/splitting.css');
+@import url('../../../assets/asset/css/master.css');
+@import url('../../../assets/asset/css/custom.css');
+
+
+.heading-first{
+    padding: 45px 0px 0px 45px;
+    margin-top: 45px;
+}
+.heading-second{
+    padding: 45px 0px 0px 45px;
+    margin-top: 30px;
+}
+
+.section--padding-features{
+    padding-top: 0px;
+    /* margin-top: 10%; */
+  }
+  /* .managementImg{
+    width: 79%;
+    padding-left: 22px;
+  } */
+
+  .copyrightClr{
+    color: #0745b1;
+  }
+
+  #header{
+    height: 80px;
+  }
+
+  .main_menu[_ngcontent-ruc-c252] ul[_ngcontent-ruc-c252] li[_ngcontent-ruc-c252] a[_ngcontent-ruc-c252]{
+    padding: 23px 10px !important;
+  }

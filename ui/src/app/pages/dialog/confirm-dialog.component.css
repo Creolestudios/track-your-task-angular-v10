@@ -1,0 +1,12 @@
+.pos-absolute {
+    position: absolute;
+}
+.testInprogress{
+    border-bottom: 2px solid #ffbf00;
+  }
+  .taskDone{
+    border-bottom: 2px solid red;
+  }
+  .taskOpen{
+    border-bottom: 2px solid green;
+  }

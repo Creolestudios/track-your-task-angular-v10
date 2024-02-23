@@ -1,0 +1,101 @@
+<ul class="list-group animate__fadeInDownBig animate__delay-2s">
+  <li class="list-group-item " *ngIf="t.isClosed == false">
+    <div class="row ">
+      <div class="col-8 pointer" (click)="editTaskDialog(t)">
+        <pre class="desc-space"
+          [innerHTML]="(add3Dots(t.taskDescription,250)) |  noSanitize">{{add3Dots(t.taskDescription,250)}}</pre>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-2 col-2">
+        <div class="center-vertically" *ngIf="t.taskStatus">
+          <mat-icon aria-hidden="false" [ngClass]="{
+            'inProgressstatus':t.taskStatus == 'In Progress',
+            'doneStatus':t.taskStatus == 'Done'
+          }" matTooltipClass='status-tooltip' matTooltip="{{tooltipTaskStatus}}"
+          [tooltip]="getStatusTooltip(t)"  (click)="taskStatusValue(t)"
+          class=" pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block" color="primary"
+          aria-label="Example home icon" #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="ss"
+          [class.overDueColor]="t.isTaskOverDue == true"  [class.overDueColor]="t.isTaskOverDue == true">flag
+        </mat-icon>
+        </div>
+        <mat-menu #ss="matMenu" [overlapTrigger]="false">
+          <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+            <ng-select [items]="dataList" bindValue="name" (change)="getTaskStatusValue($event,t)" bindLabel="name"
+              placeholder="Select status" [searchable]="true" [clearable]="false" [(ngModel)]="selectedStatus">
+            </ng-select>
+          </div>
+        </mat-menu>
+
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-2 col-2">
+        <div class="center-vertically" *ngIf="t.userDetails.userName else showUserMsg">
+          <span class="userIcon" matTooltipClass='user-tooltip' matTooltip="{{tooltipUserName}}"
+            [tooltip]="getUserNameTooltip(t)" matTooltip="Assign user" #trigger="matMenuTrigger"
+            [matMenuTriggerFor]="aa" (click)="taskUserChange(t)">
+            {{t.userDetails.userName | shortName}}</span>
+        </div>
+        <mat-menu #aa="matMenu" [overlapTrigger]="false">
+          <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+            <ng-select (change)="taskUserChangeByUser($event, t.taskId, t.taskDescription,t.taskStatus,t.taskDueDate)"
+              bindLabel="userName" placeholder="Select User" [searchable]="true" [clearable]="false"
+              [(ngModel)]="selectedUser">
+              <ng-option value="{{item.userId}}" *ngFor="let item of groupMemberData">
+                {{item.userName}}
+              </ng-option>
+              <ng-option value="">
+                No assignee
+              </ng-option>
+            </ng-select>
+          </div>
+        </mat-menu>
+        <ng-template #showUserMsg>
+          <div class="center-vertically">
+            <mat-icon class="delete2 defaultIconsClr" (click)="taskUserChange(t)" #ddTrigger="matMenuTrigger"
+              [matMenuTriggerFor]="aa" matTooltip="Assign user">
+              person</mat-icon>
+          </div>
+        </ng-template>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-2 col-2">
+        <div class="center-vertically1  delete2" *ngIf="t.taskDueDate else showDeuDate">
+          <mat-datepicker #picker3></mat-datepicker>
+          <!-- <mat-spinner class="spinner" *ngIf="quickSpinner" diameter="30"></mat-spinner> -->
+          <input [class.overDueColor]="t.isTaskOverDue === true" readonly matTooltipClass='red-tooltip'
+            matTooltip="{{tooltipDueDate }}" [tooltip]="getDueDateTooltip(t)"
+            (dateInput)="taskUserupdateByDueDate('input', $event,t)" value="{{t.taskDueDate | date: 'MMM dd'}}"
+            type="text" (click)="picker3.open()" placeholder="{{t.taskDueDate | date: 'MMM dd'}}" matInput
+            [matDatepicker]="picker3" class="dueDateInput delete2 pt-2" />
+        </div>
+
+        <ng-template #showDeuDate>
+          <div class="center-vertically1 pl-2 delete2">
+            <mat-icon (click)="picker2.open()" class="delete2 taskIconColor" matTooltip="Due Date">event</mat-icon>
+            <mat-datepicker #picker2></mat-datepicker>
+            <span>
+              <input matTooltip="Due Date" readonly (dateInput)="taskUserupdateByDueDate('input', $event,t)"
+                [min]="TodayDate" type="text" (click)="picker2.open()" matInput [matDatepicker]="picker2"
+                class="dueDateInput delete2 defaultIconsClr" />
+            </span>
+          </div>
+        </ng-template>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-2 col-2">
+        <button mat-icon-button [matMenuTriggerFor]="beforeTaskMenu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #beforeTaskMenu="matMenu" xPosition="before">
+          <button mat-menu-item (click)="getTaskDetailsById(t.taskId)">
+            <mat-icon class="delete2">visibility</mat-icon>
+            <span>View</span>
+          </button>
+          <button mat-menu-item (click)="deleteTask(t.taskId)">
+            <mat-icon class="delete2">delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
+
+    </div>
+  </li>
+
+</ul>
+

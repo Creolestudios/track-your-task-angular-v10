@@ -1,0 +1,102 @@
+<app-menu></app-menu>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+            <div class="card  mb-3">
+                <div class="card-body user-search">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="row">
+                                <div class="col-lg-11 col-md-11 col-xs-11">
+                                    <h2 style="display: inline"></h2>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-xs-2"></div>
+                            </div>
+
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-8 col-md-8 d-xl-block d-lg-block d-md-block "></div>
+                                <div class="mt-3 d-xl-none d-lg-none d-md-none d-sm-block d-block col-8 col-sm-8 "></div>
+                                <div class="col-1 pointer">
+                                    <mat-icon color="primary" class=" pointer" (click)="searchBar()" matTooltip="Search user">search
+                                 </mat-icon>
+                                </div>
+                                <div class="col-3 pointer" *ngIf="(textShowAllMArk)">
+                                    <p class="maarAsreadColor pointer"  (click)="markAsAllRead()"  mat-button color="warn" >Mark all as read </p>
+                                </div>
+                                <div class="col-1 pointer"></div>
+                                <div class="col-1 pointer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <div class="row" *ngIf="(searchUsers)">
+                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2"></div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="input-group mb-4 border rounded-pill p-1">
+                                <div class="input-group-prepend border-0">
+                                    <button id="button-addon4" type="button" class="btn btn-link text-primary">
+                                        <i class="fa fa-search iconColor"></i>
+                                    </button>
+                                </div>
+                                <input type="search" placeholder="Search notification message" [(ngModel)]="term" aria-describedby="button-addon4"
+                                          class="form-control bg-none border-0"/>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                            <!-- <mat-form-field appearance="fill">
+                                <mat-label>Custom calendar header</mat-label>
+                                <input matInput [matDatepicker]="picker1">
+                                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                <mat-datepicker #picker1 [calendarHeaderComponent]="exampleHeader"></mat-datepicker>
+                            </mat-form-field> -->
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2"></div>
+                    </div>
+                </h5>
+                <div class="table-responsive scrollbar invitationFixedHeight" style="overflow-x:auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" >Notification message</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let n of notificationList | filter:term">
+                                <td>
+                                    <mat-card-subtitle>{{n.message}}
+                                    </mat-card-subtitle>
+                                </td>
+                                <td>{{ n.createdAt | date}}</td>
+                                <td>
+                                    <div  *ngIf="n.isRead == false else elseBlockRead">  
+                                            <p mat-button class="maarAsreadColor pointer"   color="primary"  (click)="markRead(n.notificationId, n.moduleType)">Mark as read</p>
+                                            <!-- <button mat-button color="warn" (click)="rejectInvitation(n. notificationId, n.moduleType)">Reject</button> -->
+                                    </div>
+                                    <ng-template #elseBlockRead>
+                                        <p mat-button color="primary">Read </p>
+                                    </ng-template>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p *ngIf="(ErrorMessage)">No notification found</p>
+                </div>
+            </div>
+
+        </div>
+        <!-- col-xl-12 end-->
+    </div>
+    <!-- row end-->
+</div>
+<!-- container-fluid end-->

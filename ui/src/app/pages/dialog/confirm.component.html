@@ -1,0 +1,11 @@
+
+<h1 mat-dialog-title></h1>
+<div mat-dialog-content>
+  {{message}}
+</div>
+<div style="float:right;margin:20px;">
+  <input style="margin:0px 10px;" type="button" (click)="onConfirm()" value="Confirm" 
+    class="btn btn-xs border btn-default mr-1 track-btn-blue" />
+  <input type="button" value="Cancel" (click)="onDismiss()" 
+    class="btn btn-xs border btn-default" />
+</div>

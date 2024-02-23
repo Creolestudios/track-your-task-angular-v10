@@ -1,0 +1,106 @@
+<app-menu></app-menu>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="bs-example">
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 ">
+      <div class="card updateProfile ">
+        <div class="card-header headerBottomClr">
+          Update Profile
+        </div>
+        <div class="card-body">
+          <form #myform="ngForm" [formGroup]="changeProfileFrom" (ngSubmit)="updateUserProfile(changeProfileFrom)">
+            <div class="form-group row">
+              <div class="col-lg-5 col-sm-5 col-xs-5 text-lg-right">
+                <label for="username">User Name <span class="text-danger">*</span></label>
+              </div>
+              <div class="col-lg-5">
+                <input type="text" formControlName="userName" value="{{userName}}" placeholder="Enter User Name"
+                  class="form-control" [ngClass]="{ 'is-invalid': userSubmitted && g.userName.errors }" />
+                <div *ngIf="userSubmitted && g.userName.errors" class="invalid-feedback">
+                  <!--div *ngIf="g.userName.errors.required"> User Name is required</div-->
+                  <div *ngIf="g.userName.errors.trimRequired">User Name is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group text-center box bg-1 mr-3 pl-1">
+              <button [disabled]="loading" class="btn btn-xs border btn-default track-btn-blue">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 ">
+      <div class="card updateProfile">
+        <div class="card-header headerBottomClr">
+          Update Password
+        </div>
+        <div class="card-body">
+          <form [formGroup]="changepassFrom" (ngSubmit)="onSubmit(changepassFrom)">
+            <div class="form-group row">
+              <div class="col-lg-5 col-sm-5 col-xs-5 text-lg-right">
+                <label for="username">Password <span class="text-danger">*</span></label>
+              </div>
+              <div class="col-lg-5">
+                <input type="password" formControlName="password" class="form-control"
+                  placeholder="Enter Current Password" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                  <div *ngIf="f.password.errors.required"> Password is required</div>
+                </div>
+
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-5 col-sm-5 col-xs-5 text-lg-right">
+                <label for="username">New Password <span class="text-danger">*</span></label>
+              </div>
+              <div class="col-lg-5">
+                <input type="password" formControlName="newPassword" class="form-control"
+                  placeholder="Enter New password" [ngClass]="{ 'is-invalid': submitted && f.newPassword.errors }" />
+                <div *ngIf="submitted && f.newPassword.errors" class="invalid-feedback">
+                  <div *ngIf="f.newPassword.errors.required">New Password is required</div>
+                </div>
+                <div *ngIf="submitted && f.newPassword.errors" class="invalid-feedback">
+                  <div *ngIf="f.newPassword.errors.pattern">Password must contain at least eight characters, at
+                    least
+                    one uppercase letter,one special character, one lowercase letter and one number. </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-lg-5 col-sm-5 col-xs-5 text-lg-right">
+                <label for="username">Confirm Password <span class="text-danger">*</span></label>
+              </div>
+              <div class="col-lg-5">
+                <input type="password" formControlName="confirmPassword" class="form-control"
+                  placeholder=" Enter Confirm Password"
+                  [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+                <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                  <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+                </div>
+                <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                  <div *ngIf="f.confirmPassword.errors.mustMatch">Password and confirm password must match</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group text-center box bg-1 mr-3 pl-1">
+              <button [disabled]="loadingBtn" disabled class="btn btn-xs border btn-default track-btn-blue">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                Save
+              </button>
+              <!-- <button type="button" class="btn btn-xs border btn-default"  (click)="cancelPassForm()"> Close </button> -->
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

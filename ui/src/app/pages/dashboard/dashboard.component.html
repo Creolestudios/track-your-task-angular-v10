@@ -1,0 +1,40 @@
+<app-menu></app-menu>
+
+<div class="container-fluid bgColor">
+  <!-- <div class="row mt-2">
+    <div class=" col-xl-12 col-lg-12 col-md-12 col-12 col-sm-12">
+      <app-my-assign></app-my-assign>
+    </div>
+
+  </div> -->
+
+  <div class="row mt-2">
+    <!-- <div class=" col-xl-6 col-lg-6 col-md-6 col-12 col-sm-12">
+      <app-group-chart (groupCount)="getGroupCnt($event)"></app-group-chart>
+    </div> -->
+    <div class="col-xl-12 col-lg-12 col-md-12 col-12 col-sm-12 ">
+
+      <app-my-assign></app-my-assign>
+      <!-- <app-mytask></app-mytask> -->
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="mb-4 col-xl-6 col-lg-6 col-md-6 col-12 col-sm-12">
+      <!-- <app-mytask></app-mytask> -->
+      <app-main-group></app-main-group>
+    </div>
+    <div class=" col-xl-6 col-lg-6 col-md-6 col-12 col-sm-12">
+      <!-- <app-mytask></app-mytask> -->
+      <app-group-chart (groupCount)="getGroupCnt($event)"></app-group-chart>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="mb-4 col-xl-6 col-lg-6 col-md-6 col-12 col-sm-12">
+      <app-mytask></app-mytask>
+    </div>
+    <div class=" col-xl-6 col-lg-6 col-md-6 col-12 col-sm-12">
+      <!-- <app-mytask></app-mytask> -->
+      <!-- <app-group-chart (groupCount)="getGroupCnt($event)"></app-group-chart> -->
+    </div>
+  </div>
+</div>

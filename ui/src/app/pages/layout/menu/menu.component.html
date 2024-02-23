@@ -1,0 +1,144 @@
+<body class="hero-anime">
+    <div class="navigation-wrap bg-light start-header start-style">
+        <div class="menu-padding-logo">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <nav class="navbar navbar-expand-md navbar-light">
+                        <a class="navbar-brand" href="javascript:void(0)">
+                            <img src="assets/img/Logo.png" alt="Track2Ecxel"/>
+                        </a>
+
+                        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto py-4 py-md-0">
+                                 <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link" href="javascript:void(0);" routerLinkActive='active' routerLink="/dashboard">Dashboard</a>
+                                </li>
+                                <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link" href="javascript:void(0)" routerLinkActive='active'
+                                        routerLink="/todo-task">Todo Task</a>
+                                </li>
+                                <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link" href="javascript:void(0)"  routerLinkActive='active' routerLink="/recursive-task">Recursive Task</a>
+                                </li>
+                                <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link" href="javascript:void(0)" routerLinkActive='active'
+                                        routerLink="/user">Users</a>
+                                </li>
+                                <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link" href="javascript:void(0)" routerLinkActive='active'
+                                        routerLink="/profile">Profile</a>
+                                </li>
+                                <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link" href="javascript:void(0)" [matBadgeHidden]="newInviteCount < 1"    matBadge="{{newInviteCount}}" routerLinkActive='active'
+                                        routerLink="/group-notification">Invitations</a>
+                                </li>
+                                <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link">
+                                        <mat-icon color="primary" class="pointer taskIconColor1"  [matBadgeHidden]="newNotificationCount < 1"  matBadge="{{newNotificationCount}}" #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="rr"
+                                      >notification_important</mat-icon>
+
+                                        <mat-menu #rr="matMenu" [overlapTrigger]="false" >
+                                            <div (click)="cancelRemoveClick($event)" class="dropdown1">
+                                                <div class="fixed-header" color="primary">
+                                                        Notifications
+                                                    <div *ngIf="(headerLink == false)">
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <small class="pointer" routerLink="/notification" >See All</small>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <small class="pointer" *ngIf="(textShowAllMArk)"  (click)="markAsAllRead()" > Mark all as read</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="removeUserList">
+                                                    <ul class="list-group" *ngFor="let n of notificationList">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 col-xs-12 col-12">
+                                                                <li class="list-group-item" [class.Notecolor]="n.isRead == false" *ngIf="n.isRead == false else elseBlock">
+                                                                    <div  class="pointer pb-2" (click)="markRead(n.notificationId,n.moduleType)">
+                                                                        {{n.message}}
+                                                                    </div>
+                                                                    <span  class="pointer" *ngIf="n.isRead == false">
+                                                                        <div class="row">
+                                                                            <div class="col-6">
+                                                                                <small clas="float-right pointer" color="warn" (click)="markRead(n.notificationId)" style="color: #ff1a1a;">Mark as read </small>
+                                                                            </div>
+                                                                            <div class="col-6">
+                                                                                <small class="float-right notifyDate" color="warn" >{{n.createdAt | date}} </small>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </span>
+
+                                                                </li>
+                                                                <ng-template #elseBlock>
+                                                                    <li class="list-group-item">
+                                                                        <div  class="pointer" (click)="redirectModule(n.moduleType)">
+                                                                            {{n.message}}
+                                                                        </div>
+                                                                    </li>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+
+                                                    </ul>
+                                                    <p  *ngIf="(textShow == 0)" class="notificationErrorMsg">No notification found
+                                                                   </p>
+                                                </div>
+                                            </div>
+                                        </mat-menu>
+
+                                    </a>
+                                </li>
+                                <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link">
+                                        <div style="cursor: pointer;">
+                                            <mat-icon class="taskIconColor1" color="primary"
+                                                [matMenuTriggerFor]="dropdownMenu" matTooltip="User">account_box
+                                            </mat-icon>
+                                            <span [matMenuTriggerFor]="dropdownMenu">
+                                                <mat-icon>arrow_drop_down</mat-icon>
+                                            </span>
+                                        </div>
+                                        <mat-menu #dropdownMenu="matMenu">
+                                          <button mat-menu-item routerLink="/profile">
+                                                <mat-icon>perm_identity</mat-icon>
+                                                <span>{{userName}}</span>
+                                            </button>
+
+                                            <button mat-menu-item (click)="logout()" >
+                                                <mat-icon>logout</mat-icon>
+                                                <span>Logout</span>
+                                            </button>
+                                        </mat-menu>
+                                    </a>
+                                </li>
+
+                                <!-- <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                                    <a class="nav-link"style="border-bottom: 2px solid #8167a">
+                                        <div>
+                                            <span>{{userName}}</span>
+                                        </div>
+                                    </a>
+                                </li>-->
+                            </ul>
+                        </div>
+
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <mat-progress-bar *ngIf="netWorkStatusOff" mode="determinate" color="warn" value="100"></mat-progress-bar>
+    <mat-progress-bar *ngIf="netWorkStatusOn" mode="determinate" color="accent" value="100"></mat-progress-bar>
+</body>

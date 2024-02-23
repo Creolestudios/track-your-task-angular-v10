@@ -1,0 +1,126 @@
+<div class="">
+
+    <div class="groupFixedHeight1 ">
+        <div class="row text-center" *ngIf="(taskErrorMsg)">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 col-sm-12">
+                <p class="alert">
+                    <strong>
+                        <mat-error>No Recursive Task Found</mat-error>
+                    </strong>
+                </p>
+            </div>
+        </div>
+        <ng-container *ngIf="isDisplayed">
+            <cdk-virtual-scroll-viewport style="height: 600px" itemSize="1"
+                        class="groupFixedHeight scrollbar">
+                <ul class="list-group taskData" *ngFor="let t of groupTaskList">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12 col-sm-12">
+                            <li class="list-group-item pointer clipboard-example-textarea description taskListBorder"
+                                [class.taskRowcolor]="t.masterTaskId === currenTask"
+                               (click)="getMasterTaskDetails(t.masterTaskId)">
+                                <pre class="desc-space" [innerHTML]="(add3Dots(t.taskDescription,250)) |  noSanitize">{{add3Dots(t.taskDescription,250)}}</pre>
+                            </li>
+                            <li class="list-group-item userInfo"  [class.taskRowcolor]="t.masterTaskId === currenTask">
+                                <mat-card-subtitle>
+                                    <small>Created by <span class="userInfoColor">{{t.createdUserDetails.userName}}</span> At <span class="userInfoColor">{{t.createdAt | date}}</span>
+                                    </small>
+                                </mat-card-subtitle>
+                            </li>
+                            <li [class.overDueColorBorder]="t.isTaskOverDue == true" class="list-group-item pointer taskOption"
+                                [ngClass]="{'taskOpen': t.taskStatus == 'Open', 'taskDone':t.taskStatus == 'Done', 'testInprogress':t.taskStatus == 'In Progress'}">
+                                <div class="row">
+                                    <div class="col-xl-2 col-lg-4 col-md-6 col-sm-7 col-9 taskStatusPadding">
+                                        <div class="center-vertically">
+                                            <mat-icon  class="delete2 taskIconColor" (click)="taskFrequencyChange(t)"  #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="ss" matTooltip="Frequency">update</mat-icon>
+                                            <span matTooltip="Frequency" #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="ss" (click)="taskFrequencyChange(t)">
+                                                {{t.frequency}}
+                                            </span>
+                                        </div>
+                                        <mat-menu #ss="matMenu" [overlapTrigger]="false">
+                                            <div   (click)="frequencyDropdown($event)" class="userTaskDropDown">
+                                                <ng-select  [items]="FrequencydataList"  bindValue="name" (change)="masterTaskUpdateByFrequency($event,t)"  bindLabel="name" placeholder="Select Frequency" 
+                                                        [searchable]="true" [clearable]="false" [(ngModel)]="selectedFrequency"></ng-select>
+                                            </div>
+                                        </mat-menu >
+                                    </div>
+
+                                    <div  class="col-xl-3 col-lg-4 col-md-6 col-sm-7 col-9" style="padding-top: 3px;">
+                                        <div class="groupDetails">
+                                            <div class="center-vertically1 delete2" *ngIf="t.recurringEndDate else showDeuDate" [class.overDueColor]="t.isTaskOverDue == true">
+                                                <mat-icon (click)="picker3.open()" (dateInput)="taskUserupdateByDueDate('input', $event,t)"  [class.overDueColor]="t.isTaskOverDue == true"  class="delete2 taskIconColor" matTooltip="Recurring end date">event</mat-icon>
+                                                <mat-datepicker #picker3></mat-datepicker>
+                                                <input matTooltip="Recurring end date" readonly [min]="minDate" (dateInput)="taskUserupdateByDueDate('input', $event,t)" value="{{t.recurringEndDate | date}}" type="text" (click)="picker3.open()" placeholder="{{t.recurringEndDate | date}}"  matInput [matDatepicker]="picker3" class="dueDateInput delete2"/>
+                                            </div>
+                                            <ng-template #showDeuDate>
+                                                <div class="center-vertically1 delete2">
+                                                    <mat-icon (click)="picker2.open()" class="delete2" matTooltip="Recurring end date">event</mat-icon>
+                                                    <mat-datepicker #picker2></mat-datepicker>
+                                                    <span>
+                                                        <input readonly [min]="minDate" matTooltip="Recurring end date" (dateInput)="taskUserupdateByDueDate('input', $event,t)" type="text" (click)="picker2.open()" placeholder="No recurring end date"  matInput [matDatepicker]="picker2" class="dueDateInput delete2"/>
+                                                    </span>
+                                                </div>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-lg-6 col-md-8 col-sm-7 col-9" style="padding-top: 3px;">
+                                        <div class="center-vertically"  *ngIf="t.userDetails.userName else showUserMsg">
+                                            <mat-icon  class="delete2 taskIconColor" (click)="taskUserChange(t)"  #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="aa" matTooltip="Assign user">assignment_ind</mat-icon>
+                                            <span matTooltip="Assign user"  #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="aa" (click)="taskUserChange(t)">
+                                                {{t.userDetails.userName }}</span>
+                                        </div>
+                                        <mat-menu #aa="matMenu" [overlapTrigger]="false">
+                                            <div  (click)="userDropDown($event)"  class="userTaskDropDown">
+                                                <ng-select   (change)="taskUserChangeByUser($event, t)" bindLabel="userName" placeholder="Select User"
+                                                   [searchable]="true" [clearable]="false" [(ngModel)]="selectedUser">
+                                                    <ng-option value="">
+                                                      No assignee
+                                                     </ng-option>
+                                                    <ng-option value="{{item.userId}}" *ngFor="let item of groupMemberData">
+                                                        {{item.userName}}
+                                                    </ng-option>
+                                                </ng-select>
+
+                                            </div>
+                                        </mat-menu >
+                                        <ng-template #showUserMsg>
+                                            <div class="center-vertically" >
+                                                <mat-icon  class="delete2 taskIconColor" (click)="taskUserChange(t)" #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="aa" matTooltip="Assign user">assignment_ind</mat-icon>
+                                                <span  #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="aa">
+                                              No assignee</span>
+                                            </div>
+                                        </ng-template>
+
+                                    </div>
+                                    <div class="col-xl-1 col-lg-3 col-md-2 col-3 col-sm-3">
+                                   
+                                        <button mat-icon-button [matMenuTriggerFor]="beforeTaskMenu"
+                                          aria-label="Example icon-button with a menu">
+                                          <mat-icon>more_vert</mat-icon>
+                                        </button>
+                                        <mat-menu #beforeTaskMenu="matMenu" xPosition="before">
+                                          <button mat-menu-item (click)="getMasterTaskId(t.masterTaskId)">
+                                            <mat-icon class="delete2 taskIconColor" matTooltip="View Recursive task">visibility</mat-icon>
+                                            <span>View</span>
+                                          </button>
+                                          <button mat-menu-item (click)="deleteMasterTask(t.masterTaskId)">
+                                            <mat-icon class="taskIconColor"  matTooltip="Delete Recursive task">delete</mat-icon>
+                                            <span>Delete</span>
+                                          </button>
+                                        </mat-menu>
+      
+                                      </div>
+                                    
+                                    <!-- <div class="mb-3 d-xl-none d-lg-none d-md-none d-sm-block d-block"></div> -->
+                                </div>
+                            </li>
+                            <mat-divider style="padding: 3px;"></mat-divider>
+                        </div>
+                    </div>
+                </ul>
+            </cdk-virtual-scroll-viewport>
+        </ng-container>
+    </div>
+
+</div>

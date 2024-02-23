@@ -1,0 +1,75 @@
+<form [formGroup]="AddMasterTaskForm" (ngSubmit)="saveMasterTask()" (keydown.enter)="$event.preventDefault()">
+  <div class="form-group">
+    <ng-select [ngClass]="{ 'is-invalid': submitted && g.groupId.errors }" (ngModelChange)="getGroupId($event)"
+      [(ngModel)]="selectedGroupId" formControlName="groupId" bindValue="groupId" bindLabel="groupId"
+      placeholder="Select Group" [searchable]="true" [clearable]="true">
+      <ng-option value="{{g.groupId}}" *ngFor="let g of groupList; let i = index">
+        <option>{{g.groupName}}</option>
+      </ng-option>
+    </ng-select>
+    <mat-error *ngIf="submitted && g.groupId.errors" class="invalid-feedback">
+      <mat-error *ngIf="g.groupId.errors.required">Group is required
+      </mat-error>
+      <mat-error>{{userErrorMsg}}</mat-error>
+    </mat-error>
+  </div>
+  <div class="form-group">
+    <tinymce [ngClass]="{ 'is-invalid': submitted && g.taskDescription.errors }" formControlName="taskDescription">
+    </tinymce>
+    <mat-error *ngIf="submitted && g.taskDescription.errors" class="invalid-feedback">
+      <mat-error *ngIf="g.taskDescription.errors.required">Task
+        description is required</mat-error>
+    </mat-error>
+  </div>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-4">
+      <div class="form-group">
+        <input type="text" autocomplete="off" class="form-control" minlength="1" onlyNumber (change)="onDueDaysEvent($event)"
+          [ngClass]="{ 'is-invalid': submitted && g.dueDay.errors }" placeholder="Due days in numbers"
+          formControlName="dueDay" matInput class="form-control inputBorder">
+        <mat-error *ngIf="submitted && g.dueDay.errors" class="invalid-feedback">
+          <mat-error *ngIf="g.dueDay.errors.required"></mat-error>
+          <mat-error *ngIf="onlyNumber">Due days in numbers is
+            required</mat-error>
+        </mat-error>
+        <mat-error style="font-size: 80%;">{{dueDays}}</mat-error>
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-8">
+      <div class="form-group">
+        <ng-select formControlName="taskAssignTo" bindLabel="userId" placeholder="Select User" [searchable]="true"
+          [clearable]="true">
+          <ng-option value="{{u.userId}}" *ngFor="let u of groupMemberList; let i = index">
+            <option>{{u.userName}}</option>
+          </ng-option>
+        </ng-select>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-4">
+      <div class="form-group">
+        <ng-select formControlName="frequency" [ngClass]="{ 'is-invalid': submitted && g.frequency.errors }"
+          [items]="FrequencydataList" bindValue="name" bindLabel="name" placeholder="Select Frequency"
+          [searchable]="true" [clearable]="true"></ng-select>
+        <mat-error *ngIf="submitted && g.frequency.errors" class="invalid-feedback">
+          <mat-error *ngIf="g.frequency.errors.required">Frequency
+            is required</mat-error>
+        </mat-error>
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-4">
+      <div class="form-group">
+        <mat-datepicker #picker2></mat-datepicker>
+        <input type="text" readonly placeholder="End Due Date" (click)="picker2.open()"
+          formControlName="recurringEndDate" matInput [matDatepicker]="picker2" class="form-control inputBorder">
+      </div>
+    </div>
+  </div>
+  <button type="submit" [disabled]="loadingBtn" disabled class="btn btn-xs border btn-default mr-1 track-btn-blue">
+    Save
+  </button>
+  <button type="button" (click)="addFormClear()" class="btn btn-xs border btn-default">
+    Cancel
+  </button>
+</form>

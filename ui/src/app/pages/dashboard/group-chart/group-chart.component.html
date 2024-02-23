@@ -1,0 +1,113 @@
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title col-xl-6 col-lg-6 col-md-6  col-sm-12 col-12 userDropDown">
+      <ng-select (ngModelChange)="getSelectedGroupId($event)" [(ngModel)]="selectedGroupId" bindLabel="groupId"
+        placeholder="Select Group" [searchable]="true" [clearable]="true">
+        <ng-option value="{{g.groupId}}" *ngFor="let g of groupList; let i = index">
+          <option>{{g.groupName}}</option>
+        </ng-option>
+      </ng-select>
+    </h5>
+    <ng-container>
+      <!-- //List tab start  -->
+      <mat-tab-group>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon tabPointer">pie_chart</mat-icon>&nbsp;
+            Group stats
+          </ng-template>
+          <!-- <div class="row"> -->
+            <!-- <div class="col-xl-12 col-lg-12 col-md-12  col-sm-12 col-12"> -->
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsPiechart" [(update)]="updateFlag">
+              </highcharts-chart>
+            <!-- </div> -->
+          <!-- </div> -->
+        </mat-tab>
+        <!-- <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon">task</mat-icon>&nbsp;
+            My Tasks
+          </ng-template>
+          <ng-container>
+            <input type="search" *ngIf="(!errorMesg)" placeholder="Search task" [(ngModel)]="taskSearch" name="search"
+              autocomplete="off" aria-describedby="button-addon4" class="form-control bg-none input-group-sm">
+            <div class="myTaskList">
+              <div class="list-group mt-2" *ngFor="let t of myTaskList | filter: taskSearch; let i=index" [class.overDueTask]="t.isTaskOverDue == true">
+                <div *ngIf="t.taskStatus != 'Done'">
+                  <a class="list-group-item list-group-item-action flex-column align-items-start taskListfont">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1"></h5>
+                    </div>
+                    <p (click)="getTaskDetailsById(t.taskId)" class="mb-1 taskOption"
+                      [innerHTML]="(add3Dots(t.taskDescription,150)) |  noSanitize">{{add3Dots(t.taskDescription,150)}}
+                    </p>
+                    <small>
+                      <mat-chip #ddTrigger="matMenuTrigger" [ngClass]="{
+                        'inProgressstatus':t.taskStatus == 'In Progress'
+                      }" [matMenuTriggerFor]="ss" (click)="taskStatusValue(t)"
+                        class="myTaskChip chipColorStatus chipShadow taskOption mr-2" selected>{{t.taskStatus}}
+                      </mat-chip>
+                      <mat-chip [class.overDueColor]="t.isTaskOverDue == true" class="myTaskChip chipColorDueDate"
+                        selected>
+                        {{t.taskDueDate ? (t.taskDueDate | date: 'MMM dd') : '- -'}}</mat-chip>
+                    </small>
+                  </a>
+                </div>
+                <mat-menu #ss="matMenu" [overlapTrigger]="false">
+                  <div (click)="cancelRemoveClick($event)" class="userStatusDropDown">
+                    <ng-select [items]="dataList" bindValue="name" (change)="getTaskStatusValue($event,t)"
+                      bindLabel="name" placeholder="Select status" [searchable]="true" [clearable]="false"
+                      [(ngModel)]="selectedStatus">
+                    </ng-select>
+                  </div>
+                </mat-menu>
+              </div>
+              <p class="taskError" *ngIf="(errorMesg)">No task found {{myGroupId}}</p>
+            </div>
+          </ng-container>
+        </mat-tab> -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon">bar_chart</mat-icon>&nbsp;
+            Resource Stats
+          </ng-template>
+          <div class="col-xl-6 col-lg-6 col-md-6  col-sm-12 col-12 float-right">
+            <ng-select [(ngModel)]="seletedUser" (ngModelChange)="getSelectedUserId($event)" bindLabel="userName"
+              placeholder="Select User" [searchable]="true" [clearable]="true">
+              <ng-option value="{{u.userId}}" *ngFor="let u of groupMemberData; let i = index">
+                <option>{{u.userName}}</option>
+              </ng-option>
+            </ng-select>
+          </div>
+
+          <!-- <div class="UsrrChart pt-5 col-xl-12 col-lg-12 col-md-12  col-sm-12 col-12"> -->
+            <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsResource"></highcharts-chart>
+          <!-- </div> -->
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon">leaderboard</mat-icon>&nbsp;
+            Top achievers
+          </ng-template>
+          <div class="fixTableHead">
+            <table class="table ">
+              <thead>
+                <tr>
+                  <th scope="col">User Name</th>
+                  <th scope="col">Task completed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let t of resourceByTaskCount; let i=index">
+                  <td>{{t.userName}}</td>
+                  <td [ngClass]="{'highlight': highestTask == t.doneTaskCount && highestTask  > 0}">{{t.doneTaskCount}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
+    </ng-container>
+  </div>
+</div>

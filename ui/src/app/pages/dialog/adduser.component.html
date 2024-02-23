@@ -1,0 +1,38 @@
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+  <mat-icon class="close-icon" color="warn">close</mat-icon>
+</button>
+<div class="row">
+  <div class="col-lg-12">
+    <form [formGroup]="inviteUsersForm" (ngSubmit)="userInvite(inviteUsersForm)">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-xs-12">
+          <div class="form-group row">
+            <div class="col-lg-12 col-sm-12 col-xs-12">
+              <label for="First Name">User Emails</label>
+            </div>
+            <div class="col-lg-12 col-sm-12 col-xs-12">
+              <input type="type" formControlName="usersEmail" required
+                [ngClass]="{ 'is-invalid':submitted && f.usersEmail.errors }"
+                placeholder="Enter User emails with comma separate" aria-describedby="button-addon4"
+                class="form-control bg-none" />
+              <mat-error *ngIf="submitted && f.usersEmail.errors" class="invalid-feedback">
+                <mat-error *ngIf="f.usersEmail.errors.required">User email is required</mat-error>
+                <mat-error *ngIf="f.usersEmail.errors.isArrayOfEmails">User email with comma is required</mat-error>
+                <mat-error *ngIf="f.usersEmail.errors.pattern">Invalid email </mat-error>
+              </mat-error>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="close()" class="btn btn-xs border btn-defaultr" data-dismiss="modal">
+          Close</button>
+
+
+        <button type="submit" [disabled]="loadingBtn" disabled
+          class="btn btn-xs border btn-default ml-1 track-btn-blue"> Invite </button>
+
+      </div>
+    </form>
+  </div>
+</div>

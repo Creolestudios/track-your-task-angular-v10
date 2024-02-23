@@ -1,0 +1,254 @@
+<app-menu></app-menu>
+<div class="container-fluid">
+  <div class="row no-gutters">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="row no-gutters">
+        <div class="col-xl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12 ">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+              <div class="todo-search pb-1">
+                <div class="input-group  border ">
+                  <div class="input-group-prepend border-0 ">
+                    <button id="button-addon4" type="button" class="btn btn-link">
+                      <i class="fa fa-search iconColor taskIconColor"></i>
+                    </button>
+                  </div>
+                  <input type="search" #groupSearchInput placeholder="Search group..." [(ngModel)]="groupName"
+                    name="search" autocomplete="off" aria-describedby="button-addon4"
+                    class="form-control bg-none border-0">
+                </div>
+                <!-- <mat-icon color="primary" class="pointer" matTooltip="Search group" (click)="groupSearchToggle()">
+                  search
+                </mat-icon> -->
+              </div>
+          </div>
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+            <!-- <div class="card mt-2" *ngIf="(!SearchGroup)">
+              <div class="card-body cardPadding">
+                <div class="input-group mb-4 border rounded-pill p-1">
+                  <div class="input-group-prepend border-0">
+                    <button id="button-addon4" type="button" class="btn btn-link">
+                      <i class="fa fa-search iconColor"></i>
+                    </button>
+                  </div>
+                  <input type="search" #groupSearchInput placeholder="Search group" [(ngModel)]="groupName"
+                    name="search" autocomplete="off" aria-describedby="button-addon4"
+                    class="form-control bg-none border-0">
+                </div>
+              </div>
+            </div> -->
+
+
+
+            <div class="groupFixedHeight scrollbar mt-2">
+              <div class="row ">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                  <div class="basic-container">
+                    <mat-nav-list>
+                      <mat-list-item
+                        *ngFor="let g of GroupData | filter:groupName | sortBy:groupName | sortByFav:isFavoriteGroup; let i = index"
+                        class="groupList" (click)="getGroupdeatils(g.groupName,g.groupId)"
+                        [class.grouprowcolor]="g.groupId == currentGroup ? g.groupId == currentGroup : g.groupId == currentGroupId">
+                        <div mat-line *ngIf="g.isFavoriteGroup === true; else favBlock">
+                          {{(g.groupName)}}
+                        </div>
+                        <ng-template #favBlock>
+                          <div mat-line>{{(g.groupName)}}</div>
+                        </ng-template>
+                        <div *ngIf="g.isFavoriteGroup === true ">
+                          <mat-icon class="starIcon" color="primary">
+                            grade
+                          </mat-icon>
+                        </div>
+                      </mat-list-item>
+                    </mat-nav-list>
+                  </div>
+                </div>
+              </div>
+              <div class="row text-center" *ngIf="GroupData.length === 0">
+                <div class="col-md-12">
+                  <p class="alert">
+                    <strong>
+                      <mat-error>No Group Found</mat-error>
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+        <!-- col-xl-3 end -->
+        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
+          <div class="row ">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+              <div class="groupFixedHeight1 taskPanel">
+                <!-- <div class="row text-center" *ngIf="(taskErrorMsg)">
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-12 col-sm-12">
+                        <p class="alert">
+                          <strong>
+                            <mat-error>No Recursive Task Found</mat-error>
+                          </strong>
+                        </p>
+                      </div>
+                    </div> -->
+                <mat-tab-group>
+                  <mat-tab>
+                    <ng-template mat-tab-label>
+                      <mat-icon class="example-tab-icon tabPointer">list</mat-icon>&nbsp;
+                      List
+                    </ng-template>
+                    <div class="row " *ngIf="isDisplayed">
+                      <div class="col-3 pt-1">
+                        <ng-select [(ngModel)]="globalSelectedGroup" (change)="getGroupFromDropDown($event)"
+                          bindValue="groupName" bindLabel="groupName" class="headerPanel test" [items]="GroupData"
+                          placeholder="Select Group" [searchable]="true" [clearable]="true">
+                          <ng-template ng-header-tmp>
+                          </ng-template>
+                        </ng-select>
+                      </div>
+                      <div class="col-9 pt-1">
+                        <input type="search" [(ngModel)]="term" placeholder="Search task..." aria-describedby="button-addon4"
+                        class="form-control bg-none " />
+                      </div>
+                    </div>
+
+                    <div class="row " *ngIf="isDisplayed">
+                      <div class="col-12 col-md-12 autoTaskHeight">
+                        <ul class="list-group "
+                          *ngFor="let t of groupTaskList | slice:0:masterTaskShowMoreTaskList | filter:term; let i=index">
+                          <li class="list-group-item ">
+                            <div class="row">
+                              <div class="col-7">
+                                <pre (click)="openEditMasterPanel(t)" class="desc-space"
+                                  [innerHTML]="(add3Dots(t.taskDescription,250)) |  noSanitize">{{add3Dots(t.taskDescription,250)}}</pre>
+                              </div>
+                              <div class="col-2 pt-2">
+                                <mat-icon class="iconPointer taskIconColor iconAlign" (click)="taskFrequencyChange(t)"
+                                  #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="ss" matTooltip="Frequency">
+                                  update
+                                </mat-icon>
+                                <span matTooltip="Frequency" class="pb-2 iconPointer" #ddTrigger="matMenuTrigger"
+                                  [matMenuTriggerFor]="ss" (click)="taskFrequencyChange(t)">
+                                  {{t.frequency}}
+                                </span>
+                                <mat-menu #ss="matMenu" [overlapTrigger]="false">
+                                  <div (click)="frequencyDropdown($event)" class="userTaskDropDown">
+                                    <ng-select [items]="FrequencydataList" bindValue="name"
+                                      (change)="masterTaskUpdateByFrequency($event,t)" bindLabel="name"
+                                      placeholder="Select Frequency" [searchable]="true" [clearable]="false"
+                                      [(ngModel)]="selectedFrequency">
+                                    </ng-select>
+                                  </div>
+                                </mat-menu>
+                              </div>
+                              <div class="col-1 pt-1">
+                                <div class="center-vertically" *ngIf="t.userDetails.userName else showUserMsg">
+                                  <span matTooltipClass='user-tooltip' matTooltip="{{tooltipUserName}}"
+                                    [tooltip]="getUserNameTooltip(t)" class="userIcon" #ddTrigger="matMenuTrigger"
+                                    [matMenuTriggerFor]="aa" (click)="taskUserChange(t)">
+                                    {{t.userDetails.userName | shortName}}
+                                  </span>
+                                </div>
+                                <mat-menu #aa="matMenu" [overlapTrigger]="false">
+                                  <div (click)="userDropDown($event)" class="userTaskDropDown">
+                                    <ng-select (change)="taskUserChangeByUser($event, t)" bindLabel="userName"
+                                      placeholder="Select User" [searchable]="true" [clearable]="false"
+                                      [(ngModel)]="selectedUser">
+                                      <ng-option value>No assignee
+                                      </ng-option>
+                                      <ng-option value="{{item.userId}}" *ngFor="let item of groupMemberData">
+                                        {{item.userName}}
+                                      </ng-option>
+                                    </ng-select>
+                                  </div>
+                                </mat-menu>
+                                <ng-template #showUserMsg>
+                                  <div class="center-vertically">
+                                    <mat-icon class="iconPointer taskIconColor defaultIconsClr pt-1"
+                                      (click)="taskUserChange(t)" #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="aa"
+                                      matTooltip="Assign user">
+                                      persone
+                                    </mat-icon>
+                                  </div>
+                                </ng-template>
+                              </div>
+                              <div class="col-1 pt-1">
+                                <div class="center-vertically1 iconPointer " *ngIf="t.recurringEndDate else showDeuDate"
+                                  [class.overDueColor]="t.recurringEndDate === todayDate">
+                                  <mat-datepicker #picker3> </mat-datepicker>
+                                  <input [class.overDueColor]="t.isTaskOverDue == true" matTooltipClass='dueDate-tooltip' matTooltip="{{tooltipDueDate}}"
+                                    [tooltip]="getDueDateTooltip(t)" readonly [min]="minDate"
+                                    (dateInput)="taskUserupdateByDueDate('input', $event,t)"
+                                    value="{{t.recurringEndDate | date: 'MMM dd'}}" type="text" (click)="picker3.open()"
+                                    placeholder="{{t.recurringEndDate | date: 'MMM dd'}}" matInput
+                                    [matDatepicker]="picker3" class="dueDateInput iconPointer pt-2">
+                                </div>
+                                <ng-template #showDeuDate>
+                                  <div class="center-vertically1 iconPointer pl-2 pt-1">
+                                    <mat-icon (click)="picker2.open()" class="iconPointer"
+                                      matTooltip="Recurring end date">
+                                      event
+                                    </mat-icon>
+                                    <mat-datepicker #picker2>
+                                    </mat-datepicker>
+                                    <span>
+                                      <input readonly [min]="minDate" matTooltip="Recurring end date"
+                                        (dateInput)="taskUserupdateByDueDate('input', $event,t)" type="text"
+                                        (click)="picker2.open()" matInput [matDatepicker]="picker2"
+                                        class="dueDateInput iconPointer ">
+                                    </span>
+                                  </div>
+                                </ng-template>
+                              </div>
+                              <div class="col-1 pt-1">
+                                <button mat-icon-button [matMenuTriggerFor]="beforeTaskMenu"
+                                  aria-label="Example icon-button with a menu">
+                                  <mat-icon>more_vert</mat-icon>
+                                </button>
+                                <mat-menu #beforeTaskMenu="matMenu" xPosition="before">
+                                  <button mat-menu-item (click)="getMasterTaskId(t.masterTaskId)">
+                                    <mat-icon class="iconPointer taskIconColor" matTooltip="View Recursive task">
+                                      visibility
+                                    </mat-icon>
+                                    <span>View</span>
+                                  </button>
+                                  <button mat-menu-item (click)="deleteMasterTask(t.masterTaskId)">
+                                    <mat-icon class="taskIconColor" matTooltip="Delete Recursive task">
+                                      delete
+                                    </mat-icon>
+                                    <span>Delete</span>
+                                  </button>
+                                </mat-menu>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                        <div class="text-center  mt-2">
+                          <button type="button" *ngIf="masterTaskShowMoreTaskList < groupTaskList.length"
+                            class="btn btn-xs border btn-default mr-1 mb-2 btn-sm track-btn-blue"
+                            (click)="masterTaskShowMoreTask()">Show More+
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </mat-tab>
+                </mat-tab-group>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- col-xl-9 end -->
+      </div>
+      <!-- row end -->
+    </div>
+    <!-- col-xl-12 end -->
+  </div>
+  <!-- row end -->
+</div>
+<!-- container-fluid end -->
+<div class="addBtn" (click)="addTask()">
+  <mat-icon color="default">add</mat-icon>Master Task
+</div>

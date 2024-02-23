@@ -1,0 +1,60 @@
+<div class="signin-content">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-heading header-text">
+                <h3 class="text-center ">Please register to continue</h3>
+            </div>
+            <hr class="header-border">
+            <div class="modal-body">
+                <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" role="form">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </span>
+                            <input type="text" class="form-control" placeholder="Email Id" formControlName="userEmail" required [ngClass]="{ 'is-invalid': submitted && f.userEmail.errors }"/>
+                            <mat-error *ngIf="submitted && f.userEmail.errors" class="invalid-feedback">
+                                <mat-error *ngIf="f.userEmail.errors.required">Email is required</mat-error>
+                                <mat-error *ngIf="f.userEmail.errors.userEmail">Email must be a valid email address</mat-error>
+                            </mat-error>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </span>
+                            <input type="text" class="form-control" placeholder="User name" formControlName="userName" required [ngClass]="{ 'is-invalid': submitted && f.userName.errors }"/>
+                            <mat-error *ngIf="submitted && f.userName.errors" class="invalid-feedback">
+                                <mat-error *ngIf="f.userName.errors.required">User Name is required</mat-error>
+                            </mat-error>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-lock"></span>
+                            </span>
+                            <input type="password" class="form-control" type="password" formControlName="password" required [ngClass]="{ 'is-invalid': submitted && f.password.errors }" placeholder="Password"/>
+                            <mat-error *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                <mat-error *ngIf="f.password.errors.required">Password is required</mat-error>
+                                <mat-error *ngIf="f.password.errors.minlength">Password must be at least 6 characters</mat-error>
+                            </mat-error>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group text-center">
+                        <div class="box bg-1">
+                            <button type="submit" [disabled]="loadingBtn" disabled class="btn btn-xs border btn-default mr-1 track-btn-blue btn-md">Register</button>
+                        </div>
+                        <a href="javascript:void(0)" routerLink="/login"  class="btn btn-link">Login</a>
+                    </div>
+                       <mat-error>{{error}}</mat-error>
+                </form>
+            </div>
+        </div>
+    </div>
+
+ 
+</div>

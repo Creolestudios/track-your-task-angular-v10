@@ -1,0 +1,30 @@
+<mat-card>Group Name: {{SelectedGroupName}}</mat-card>
+
+<form [formGroup]="EditTaskForm" (ngSubmit)="onSubmitUpdateTask(EditTaskForm)">
+    <div class="form-group">
+      <tinymce [ngClass]="{ 'is-invalid': taskUpdateSubmitted && g.taskDescription.errors }"
+        formControlName="taskDescription" [config]="config"></tinymce>
+      <mat-error *ngIf="taskUpdateSubmitted && g.taskDescription.errors" class="invalid-feedback">
+        <mat-error *ngIf="g.taskDescription.errors.required">Task description is required
+        </mat-error>
+      </mat-error>
+    </div>
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-6">
+        <div class="form-group">
+          <mat-datepicker #picker2></mat-datepicker>
+          <input type="text" readonly placeholder="Due Date" (click)="picker2.open()" formControlName="taskDueDate"
+            matInput [matDatepicker]="picker2" class="form-control inputBorder" />
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-12 col-sm-6">
+        <div class="form-group">
+          <ng-select [items]="groupMemberData" formControlName="userId" bindValue="userId" bindLabel="userName"
+            placeholder="Select User" [searchable]="true" [clearable]="true" [(ngModel)]="selected"></ng-select>
+        </div>
+      </div>
+    </div>
+  <button type="submit" [disabled]="loadingBtn" disabled
+    class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+  <button type="button" (click)="editTaskCancel()" class="btn btn-xs border btn-default">Cancel</button>
+</form>

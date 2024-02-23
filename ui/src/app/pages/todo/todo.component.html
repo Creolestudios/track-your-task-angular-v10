@@ -1,0 +1,1461 @@
+<app-menu></app-menu>
+
+<div class="wrapper">
+  <!-- Sidebar Holder -->
+  <nav id="sidebar" [ngClass]="{ 'active': navbarOpen }">
+    <div class="sidebar-header">
+      <div class="card mt-3">
+        <div class="card-body todo-search cardPadding" style="height: 53px;">
+          <div class="row">
+            <div class="col-7 pt-2">
+              Group List
+            </div>
+            <div class="col-2 pt-2">
+              <mat-icon color="primary" class="pointer taskIconColor" matTooltip="Search group"
+                (click)="groupSearchToggle()">
+                search
+              </mat-icon>
+            </div>
+            <div class="col-3">
+              <button (click)="addGrouptoggle()" class="pointer" matTooltip="Add group" mat-mini-fab color="primary"
+                aria-label="Example icon button with a menu icon">
+                <mat-icon>add</mat-icon>
+              </button>
+              <!-- <button mat-raised-button color="primary">Add Group</button> -->
+              <!-- <button mat-raised-button (click)="addGrouptoggle()"  class="pointer taskIconColor1"
+                color="primary">Add group</button> -->
+              <!-- <mat-icon color="primary" class="pointer taskIconColor1" matTooltip="Add group"
+                (click)="addGrouptoggle()" style="padding-left: 0.5em;">add_circle</mat-icon> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- </div> -->
+    </div>
+    <div class="card mt-2" *ngIf="(SearchGroup)">
+      <div class="card-body cardPadding">
+        <!-- <div class="input-group mb-4 border rounded-pill p-1"> -->
+        <div class="mb-4 p-1">
+          <!-- <div class="input-group-prepend border-0"> -->
+          <!-- <button matPrefix id="button-addon4" type="button" class="btn btn-link">
+              <i class="fa fa-search iconColor"></i>
+            </button> -->
+          <!-- </div> -->
+          <!-- <input type="search" #groupSearchInput placeholder="Search group" [(ngModel)]="groupName" name="search"
+            autocomplete="off" aria-describedby="button-addon4" class="form-control bg-none border-0"> -->
+          <mat-form-field>
+
+            <i matPrefix class="fa fa-search iconColor">&nbsp;&nbsp; &nbsp;</i>
+            <!-- <mat-icon matPrefix class="my-icon">search &nbsp; &nbsp; &nbsp;</mat-icon> -->
+            <input matInput type="search" (keyup)="groupListSort()" placeholder="search here" [(ngModel)]="groupName"
+              class="search-input">
+            <div matSuffix>
+              <button mat-icon-button color="warn" *ngIf="groupName.length !== 0" (click)="clearGroupName()">
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-2" *ngIf="(AddGroup)">
+      <div class="card-body cardPadding">
+        <h2>Add group</h2>
+        <hr />
+        <form [formGroup]="AddGroupForm" (ngSubmit)="onSubmitAddGroup(AddGroupForm)">
+          <div class="form-group">
+
+            <input type="text" formControlName="groupName"
+              [ngClass]="{ 'is-invalid': groupSubmitted && f.groupName.errors }" placeholder="Enter group name"
+              class="form-control">
+            <mat-error *ngIf="groupSubmitted && f.groupName.errors" class="invalid-feedback">
+              <!--mat-error *ngIf="f.groupName.errors.required">Group name is required</mat-error-->
+              <mat-error *ngIf="f.groupName.errors.trimRequired">Group name is required</mat-error>
+              <!--mat-error *ngIf="f.groupName.errors.minlength">Group name should be 2 character.</mat-error-->
+              <!--mat-error *ngIf="f.groupName.errors.cannotContainSpace">Group name can not contain space.</mat-error-->
+            </mat-error>
+          </div>
+
+          <div class="form-group">
+            <ng-select formControlName="userEmail" bindValue="userEmail" bindLabel="userEmail" [items]="allMembersData"
+              placeholder="Select Users" multiple="true" [addTag]="true" [searchable]="true" [clearable]="true"
+              [(ngModel)]="selectedgroupUser">
+              <ng-template ng-header-tmp>
+                <div>
+                  <button mat-button color="primary" (click)="onSelectAll()">Select All</button>
+                  <button mat-button color="primary" (click)="onClearAll()">Clear All</button>
+                </div>
+              </ng-template>
+              <!-- <ng-option value="{{u.userEmail}}" *ngFor="let u of allMembersData">
+                  <option>{{u.userName}}</option>
+                </ng-option> -->
+
+            </ng-select>
+          </div>
+          <div class="text-center mb-2">
+            <button type="submit" [disabled]="loadingBtn" disabled
+              class=" btn btn-xs border btn-default mr-1 track-btn-blue">
+              Save
+            </button>
+            <button type="button" (click)="addGroupCancelButton()" class="btn btn-xs border btn-default">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="card edit mt-2" *ngIf="(editForm)">
+      <div class="card-body cardPadding">
+        <h2>Edit group </h2>
+        <hr />
+        <div class="form-group">
+          <input type="text" placeholder="Enter group name" class="form-control " [(ngModel)]="editGroupName" />
+          <mat-error class="invalid-feedback">{{errorMsg}}</mat-error>
+        </div>
+        <div class="text-center mb-2">
+          <button type="submit" (click)="updateGroupName(editGroupName)"
+            class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+          <button type="button" (click)="editGroupCancel()" class="btn btn-xs border btn-default">Cancel</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="groupFixedHeight scrollbar mt-2">
+      <div class="row ">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="basic-container ">
+            <mat-nav-list>
+              <!-- | sortBy:groupName | sortByFav:isFavoriteGroup -->
+
+              <mat-list-item *ngFor="let g of GroupData ; let i = index" class="groupList groupParent"
+                (click)="getGroupdeatils(g.groupName,g.groupId,g.isGroupAdmin)"
+                [class.grouprowcolor]="g.groupId == currentGroup ? g.groupId == currentGroup : g.groupId == currentGroupId">
+                <!-- [class.grouprowcolor]="g.groupId == currentGroup ? g.groupId == currentGroup : g.groupId == currentGroupId" -->
+                <div mat-line>
+                  {{add3Dots(g.groupName,30)}}
+                </div>
+                <div class="row fav-Group fav-menu">
+
+                  <div class="col-xl-2 col-lg-4 col-md-2 col-sm-2 col-2 fav-Group">
+                    <div *ngIf="g.isFavoriteGroup === true else favBlock">
+                      <mat-icon class="starIcon taskIconColor1" color="primary">grade</mat-icon>
+                    </div>
+                    <ng-template #favBlock>
+                      <div>
+                        <mat-icon class="starIcon taskIconColor1" (click)="addFavGroup(g.groupId)"
+                          ng-model="isFavoriteGroup" color="primary">star_border</mat-icon>
+                      </div>
+                    </ng-template>
+                  </div>
+                  <div class="col-xl-2 col-lg-4 col-md-2 col-sm-2 col-2 groupIcons taskIconColor">
+                    <!-- <button mat-icon-button [matMenuTriggerFor]="beforeMenu" (click)="getGroupOwnerList(g.groupId)"
+                      aria-label="Example icon-button with a menu"> -->
+                    <button mat-icon-button [matMenuTriggerFor]="beforeMenu" (click)="getGroupOwnerList(g.groupId)">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+
+                    <mat-menu #beforeMenu="matMenu" xPosition="before">
+                      <button mat-menu-item disabled *ngIf="g.isGroupOwner === false" (click)="deleteGroup(g.groupId)">
+                        <mat-icon class="delete2" (click)="deleteGroup(g.groupId)">delete</mat-icon>
+                        <span (click)="deleteGroup(g.groupId)">Delete</span>
+                      </button>
+                      <button mat-menu-item *ngIf="g.isGroupOwner === true" (click)="deleteGroup(g.groupId)">
+                        <mat-icon class="delete2" (click)="deleteGroup(g.groupId)">delete</mat-icon>
+                        <span (click)="deleteGroup(g.groupId)">Delete</span>
+                      </button>
+                      <button mat-menu-item *ngIf="g.isGroupOwner === true" (click)="getGroupName(g)">
+                        <mat-icon class="delete2">create</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                      <button mat-menu-item disabled *ngIf="g.isGroupOwner === false" (click)="getGroupName(g)">
+                        <mat-icon class="delete2">create</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                      <button mat-menu-item [ngClass]="{'leaveIconHide': isOwner == true}" [matMenuTriggerFor]="menu2"
+                        *ngIf="g.isGroupAdmin === true && g.isGroupOwner === true else elseLeaveGroup">
+                        <mat-icon class="delete2" (mouseenter)="menu2">exit_to_app</mat-icon>
+                        <span>Leave group</span>
+                        <mat-menu #menu2="matMenu">
+
+                          <div (click)="cancelRemoveClick($event)" class="dropdown1"
+                            *ngFor="let seting of collection.data;let i = index">
+                            <div class="fixed-header">
+                              <nav>
+                                Group Users
+                              </nav>
+                            </div>
+                            <div class="removeUserList">
+                              <mat-list role="list" *ngFor="let o of ownerUserList">
+                                <div class="row">
+                                  <div class="col-lg-7 col-md-7 col-xs-7  col-sm-7 col-7">
+                                    <mat-list-item role="listitem" style="padding-top: 3px;">
+                                      <div>
+                                        {{o.userName}} |
+                                      </div>
+
+                                    </mat-list-item>
+                                  </div>
+                                  <div class="col-lg-5 col-md-5 col-xs-5 col-sm-5 col-5">
+                                    <div class="userDropDownList" (click)="leaveGroupOwner(g.groupId,o.groupMemberId)">
+                                      <mat-card-subtitle>
+                                        <small>Make admin</small>
+                                      </mat-card-subtitle>
+                                    </div>
+                                  </div>
+                                </div>
+                              </mat-list>
+                            </div>
+                          </div>
+                        </mat-menu>
+                      </button>
+
+                      <!-- rudresh work -->
+                      <!-- <button mat-menu-item [ngClass]="{'leaveIconHide': isOwner == true}" [matMenuTriggerFor]="menu2"
+                        *ngIf="g.isGroupAdmin === true && g.isGroupOwner === true"> -->
+                      <!--  else elseLeaveGroup -->
+                      <!-- <mat-icon class="delete2">exit_to_app</mat-icon>
+                        <span>Add Admin</span>
+                        <mat-menu #menu2="matMenu">
+
+                          <div (click)="cancelRemoveClick($event)" class="dropdown1 drop-down-class mat-div-class"
+                            *ngFor="let seting of collection.data;let i = index">
+                            <div class="fixed-header">
+                              <nav>
+                                Group Users
+                              </nav> -->
+                      <!-- <button mat-raised-button color="primary" (click)="makeUserToAdmin()"> add admin </button> -->
+                      <!-- </div>
+                            <div class="removeUserList remove_user_list_postion">
+                              <mat-list role="list" class="mat-list-position" *ngFor="let o of ownerUserList">
+                                <input #checkboxes class="mat-input-position"  type="checkbox" (click)="adminUserCollection(o.userId,o.groupMemberId,g.groupId)">{{o.userName}}  -->
+                      <!-- <div class="row">
+                                  <div class="col-lg-7 col-md-7 col-xs-7  col-sm-7 col-7">
+                                    <mat-list-item role="listitem" style="padding-top: 3px;">
+                                      <div>
+                                        {{o.userName}}
+                                      </div>
+                                    </mat-list-item>
+                                  </div>
+                                  <div class="col-lg-5 col-md-5 col-xs-5 col-sm-5 col-5">
+                                    <div class="userDropDownList">
+                                      <mat-card-subtitle>
+                                        <small>Make admin</small>
+                                      </mat-card-subtitle>
+                                    </div>
+                                  </div>
+                                </div> -->
+                      <!-- </mat-list>
+                            </div>
+                            <button mat-raised-button color="primary" (click)="makeUserToAdmin()" class="mat-button-position"> make admin </button>
+                          </div>
+                        </mat-menu>
+                      </button> -->
+
+                      <!-- rudresh work -->
+
+                      <!-- <ng-template #elseLeaveGroup>
+                        <button mat-menu-item (click)="leaveGroup(g.groupId)">
+                          <mat-icon class="delete2">exit_to_app</mat-icon>
+                          <span>Leave group</span>
+                        </button>
+                      </ng-template> -->
+                    </mat-menu>
+                  </div>
+                </div>
+              </mat-list-item>
+
+            </mat-nav-list>
+          </div>
+        </div>
+      </div>
+      <div class="row text-center" *ngIf="GroupData.length === 0">
+        <div class="col-md-12">
+          <p class="alert">
+            <strong>
+              <mat-error>No Group Found</mat-error>
+            </strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content Holder -->
+  <div id="content">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <!-- <div class="container-fluid">
+
+          <button type="button" id="sidebarCollapse" (click)="toggleNavbar()" class="navbar-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation" *ngIf="!navbarOpen">
+            <i class="fa fa-align-justify"></i>
+          </button>
+
+        </div> -->
+      <div class="row taskPanel">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="">
+            <div class="groupFixedHeight1">
+              <div class="collapsPanel">
+                <!-- <mat-icon data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+                    aria-controls="collapseExample" color="default">open_with</mat-icon> -->
+                <div style="float:left;    float: left;
+                width: 30px;
+                padding-top: 4px;">
+                  <button type="button" id="sidebarCollapse" (click)="toggleNavbar()" class="navbar-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </button>
+                  <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation" *ngIf="!navbarOpen">
+                    <i class="fa fa-align-justify"></i>
+                  </button>
+                </div>
+                <div>
+                  <ng-container>
+                    <!-- //List tab start  -->
+
+
+                    <mat-tab-group>
+                      <!-- <mat-tab>
+                          <button type="button" id="sidebarCollapse" (click)="toggleNavbar()" class="navbar-btn">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </button>
+                          <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button"
+                            data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                            *ngIf="!navbarOpen">
+                            <i class="fa fa-align-justify"></i>
+                          </button>&nbsp;
+                        </mat-tab> -->
+                      <!-- //borad tab start  -->
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">developer_board</mat-icon>&nbsp;
+                          Board
+                        </ng-template>
+                        <div class="row " *ngIf="isDisplayed">
+                          <!-- <div class="col-xl-3 col-lg-3 col-md-3 col-sm-8 col-12 pt-1">
+                            <ng-select [(ngModel)]="globalSelectedGroup" (change)="getGroupFromDropDown($event)"
+                              bindValue="groupName" bindLabel="groupName" class="headerPanel test" [items]="GroupData"
+                              placeholder="Select Group" [searchable]="true" [clearable]="true">
+                              <ng-template ng-header-tmp>
+                              </ng-template>
+                            </ng-select>
+                          </div> -->
+                          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-1 pt-2">
+                            <!-- <mat-icon color="primary" class="addTaskBtn" (click)="quickAddForm()">add</mat-icon> -->
+                          </div>
+                          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-4 col-12">
+                            <div class="card-body headerPanel iconPanel">
+                              <!-- *ngIf="isTask" -->
+                              <mat-icon color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="filterPanel" matTooltip="Filter">
+                                filter_alt</mat-icon>
+                              <mat-menu #filterPanel="matMenu" class="mat-menu-panel-filter">
+                                <mat-tab-group (click)="stopPropagationFilterPanel($event)">
+                                  <mat-tab label="Search by Text">
+                                    <div class="card-body cardPadding">
+                                      <div class="row">
+                                        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-12">
+                                          <div class="input-group mb-4 border rounded-pill p-1">
+                                            <div class="input-group-prepend border-0">
+                                              <button id="button-addon4" type="button"
+                                                class="btn btn-link text-primary">
+                                                <i class="fa fa-search iconColor"></i>
+                                              </button>
+                                            </div>
+                                            <input type="search" placeholder="Search task" [(ngModel)]="taskSearch"
+                                              name="search" autocomplete="off" aria-describedby="button-addon4"
+                                              class="form-control bg-none border-0">
+                                          </div>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+                                          <button color="primary" matTooltip="Close panel" (click)="closedSearchPanel()"
+                                            mat-button>
+                                            <mat-icon>clear</mat-icon>
+                                          </button>
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                  </mat-tab>
+                                  <mat-tab label="Search by Status">
+                                    <div class="row">
+                                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <section class="example-section  form-inline ml-5 pl-2">
+                                          <div *ngFor="let s of dataListpipeFilteer;let i = index">
+                                            <input type="checkbox" class="example-margin " #ref
+                                              [checked]="position_stack" [(ngModel)]="s.checked"
+                                              (click)="getCheckBoxVAlue(s.id, dataListpipeFilteer)" />
+                                            {{s.name}}
+                                          </div>
+                                          <button type="button" (click)="unCheckAll()"
+                                            class="example-margin btn btn-xs border btn-default mr-1 track-btn-blue">
+                                            Clear filter
+                                          </button>
+
+                                        </section>
+                                        <pre><span *ngFor="let s of checked()" style="padding-right:10px;"></span></pre>
+                                      </div>
+                                    </div>
+                                  </mat-tab>
+                                  <mat-tab label="Custom Filter">
+                                    <div class="card-body customFilter">
+                                      <form [formGroup]="filterTaskListForm"
+                                        (ngSubmit)="filterTasList(filterTaskListForm)">
+                                        <div class="row">
+                                          <div class="col-xl-4 col-lg-4 col-md-4 col-6 col-sm-4 col-12">
+                                            <mat-form-field>
+                                              <mat-select formControlName="taskStatus" placeholder="Task status">
+                                                <mat-option *ngFor="let s of this.dataListSearchFilter;let i = index"
+                                                  value="{{s.name}}">
+                                                  {{s.name}}</mat-option>
+                                              </mat-select>
+                                            </mat-form-field>
+                                          </div>
+                                          <div class="col-xl-4 col-lg-4 col-md-4 col-6 col-sm-4 col-12">
+                                            <mat-form-field>
+                                              <mat-select formControlName="taskAssignTo" class="userInput"
+                                                placeholder="Assign user" matTooltip="Assign Users">
+                                                <mat-option *ngFor="let user of groupMemberData"
+                                                  value="{{user.userId}}">
+                                                  {{user.userName}}
+                                                </mat-option>
+                                              </mat-select>
+                                            </mat-form-field>
+                                          </div>
+                                          <div class="col-xl-4 col-lg-4 col-md-4 col-4 col-sm-4 col-8">
+                                            <mat-form-field appearance="fill" class="dueDate">
+                                              <mat-label>Due Date</mat-label>
+                                              <input matInput [matDatepicker]="picker" formControlName="taskDueDate"
+                                                (click)="picker.open()">
+                                              <mat-datepicker-toggle matSuffix [for]="picker">
+                                              </mat-datepicker-toggle>
+                                              <mat-datepicker #picker></mat-datepicker>
+                                            </mat-form-field>
+                                          </div>
+                                        </div>
+                                        <div class="row">
+                                          <div class="col-md-8">
+                                            <div class="row">
+                                              <div class="col-xl-2 col-lg-2 col-md-2 col-4 col-sm-4">
+                                                <button type="submit" matTooltip="Search" color="primary" mat-button>
+                                                  <mat-icon>search</mat-icon>
+                                                </button>
+                                              </div>
+                                              <div class="col-xl-2 col-lg-2 col-md-2 col-4 col-sm-4">
+                                                <button color="primary" matTooltip="Reset filter" (click)="filerClear()"
+                                                  mat-button>
+                                                  <mat-icon>restart_alt</mat-icon>
+                                                </button>
+                                              </div>
+                                              <div class="col-xl-2 col-lg-2 col-md-2 col-4 col-sm-4">
+                                                <button color="primary" matTooltip="Close panel"
+                                                  (click)="filterPanleClosed()" mat-button>
+                                                  <mat-icon>clear</mat-icon>
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-md-4">
+                                            <div class="row">
+                                              <div class="col-xl-5 col-lg-5 col-md-5 col-3 col-sm-3">
+                                                <button type="button" (click)="getMyTasks()" mat-stroked-button
+                                                  color="primary">My
+                                                  Task</button>
+                                              </div>
+                                              <div class="col-xl-5 col-lg-5 col-md-5 col-3 col-sm-3">
+                                                <button type="button" (click)="getAlltaskList()" mat-stroked-button
+                                                  color="primary">Show All</button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </form>
+                                    </div>
+                                  </mat-tab>
+                                </mat-tab-group>
+                              </mat-menu>
+
+                              <mat-icon color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="tetgr"
+                                matTooltip="Remove users from group">person_remove</mat-icon>
+
+                              <mat-menu #tetgr="matMenu" [overlapTrigger]="false">
+                                <div (click)="cancelRemoveClick($event)" class="dropdown1"
+                                  *ngFor="let seting of collection.data;let i = index">
+                                  <div class="fixed-header">
+                                    <nav>
+                                      Group members
+                                    </nav>
+                                  </div>
+                                  <div class="removeUserList">
+                                    <mat-list role="list" *ngFor="let gm of groupMemberData">
+                                      <div class="row">
+                                        <div class="col-lg-10 col-md-10 col-xs-10">
+                                          <mat-list-item role="listitem" class="pt-3">
+                                            <div *ngIf="gm.isGroupOwner === true; else OwnerTemp">
+                                              {{gm.userName}}
+                                              <mat-card-subtitle>(Owner) </mat-card-subtitle>
+                                            </div>
+                                            <ng-template #OwnerTemp>
+                                              {{gm.userName}}</ng-template>
+                                          </mat-list-item>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-xs-2">
+                                          <div *ngIf="gm.isGroupOwner === true; else deleteBlock">
+                                            <button class="delete" [hidden]="gm.isGroupOwner === true"
+                                              (click)="fireDeleteEventUser(gm.groupMemberId)">
+                                              <!-- Adding Mat Icon via svg due to select bug -->
+                                              <svg fill="#cccccc" height="24" viewBox="0 0 24 24" width="24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M0 0h24v24H0V0z" fill="none" />
+                                                <path
+                                                  d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                                                <path d="M0 0h24v24H0z" fill="none" />
+                                              </svg>
+                                            </button>
+                                          </div>
+                                          <ng-template #deleteBlock>
+                                            <div *ngIf="isGroupAdmin === false; else deletetempBlock">
+                                              <button class="delete deleteBtn"
+                                                (click)="fireDeleteEventUser(gm.groupMemberId)">
+                                                <!-- Adding Mat Icon via svg due to select bug -->
+                                                <svg fill="#cccccc" height="24" viewBox="0 0 24 24" width="24"
+                                                  xmlns="http://www.w3.org/2000/svg">
+                                                  <path d="M0 0h24v24H0V0z" fill="none" />
+                                                  <path
+                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                                                  <path d="M0 0h24v24H0z" fill="none" />
+                                                </svg>
+                                              </button>
+                                            </div>
+                                            <ng-template #deletetempBlock>
+                                              <button class="delete " (click)="fireDeleteEventUser(gm.groupMemberId)">
+                                                <svg fill="#cccccc" height="24" viewBox="0 0 24 24" width="24"
+                                                  xmlns="http://www.w3.org/2000/svg">
+                                                  <path d="M0 0h24v24H0V0z" fill="none" />
+                                                  <path
+                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                                                  <path d="M0 0h24v24H0z" fill="none" />
+                                                </svg>
+                                              </button>
+                                            </ng-template>
+                                          </ng-template>
+                                        </div>
+                                      </div>
+                                    </mat-list>
+                                  </div>
+                                </div>
+                              </mat-menu>
+
+                              <mat-icon *ngIf="(systemSettingIcon)" color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                matTooltip="Add/Invite Users" [matMenuTriggerFor]="inviteMenu">
+                                person_add
+                              </mat-icon>
+                              <mat-menu #inviteMenu="matMenu">
+                                <div class="dropdown1">
+                                  <div class="card">
+                                    <!-- <div class="card-header fixed-header">
+                                        <h2>Add/Invite Users </h2>
+                                      </div> -->
+                                    <div class="fixed-header-invite-user">
+                                      <nav>
+                                        Add/Invite Users
+                                      </nav>
+                                    </div>
+                                    <div class="card-body invitePanel" (click)="stopPropagationAddmember($event)">
+                                      <form [formGroup]="addGroupNewMembersForm"
+                                        (ngSubmit)="addGroupMembers(addGroupNewMembersForm)">
+                                        <div class="form-group">
+                                          <ng-select [ngClass]="{ 'is-invalid': submitted && u.userEmail.errors }"
+                                            [items]="newMembers" formControlName="userEmail" bindValue="userEmail"
+                                            bindLabel="userEmail" placeholder="Select/Add Users" multiple="true"
+                                            [addTag]="true" [searchable]="true" [clearable]="true">
+                                            <ng-template ng-header-tmp>
+                                              <div>
+                                                <button mat-button color="primary" (click)="onSelectAllInvite()">Select
+                                                  All</button>
+                                                <button mat-button color="primary" (click)="onClearAllInvite()">Clear
+                                                  All</button>
+                                              </div>
+                                            </ng-template>
+                                          </ng-select>
+
+                                          <!-- rudresh work start-->
+
+                                          <!-- rudresh work end -->
+                                        </div>
+                                        <div class="text-center mb-2">
+                                          <button type="submit" [disabled]="loadingBtn" disabled
+                                            class=" btn btn-xs border btn-default mr-1 track-btn-blue">
+                                            Save
+                                          </button>
+                                          <button type="button" (click)="addGroupCancel()"
+                                            class="btn btn-xs border btn-default">Cancel</button>
+                                        </div>
+
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </mat-menu>
+                              <mat-icon *ngIf="(systemSettingIcon)" color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                (click)="onReminder()" matTooltip="Task reminder to group members">
+                                contact_mail
+                              </mat-icon>
+                              <mat-icon *ngIf="(systemSettingIcon)" color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="dd" matTooltip="Application settings ">
+                                settings_applications</mat-icon>
+                              <mat-menu #dd="matMenu" [overlapTrigger]="false">
+                                <div (click)="cancelClick($event)" class="dropdownSystem" style="padding: 13px;"
+                                  *ngFor="let seting of collection.data;let i = index">
+                                  <div style="text-transform: capitalize;">{{seting.emailpreferences}}</div>
+                                  <mat-slide-toggle color="primary"
+                                    *ngFor="let s of seting.systemSettingsData;let i = index" [checked]="isChecked"
+                                    #toggleElement [(ngModel)]="isChecked" (change)="onChange($event.checked,seting)">
+                                    Send Email to Assigned Users
+                                  </mat-slide-toggle>
+                                </div>
+                              </mat-menu>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row div-inline-m">
+                          <div class="col-md-4">
+                            <div class="drag-container">
+                              <div class="section-headingOpen" *ngIf="offsetFlag">Open <span class="widgetCount">{{OpenTaskList.length}}</span></div>
+                              <div class="section-headingOpen1" *ngIf="!offsetFlag"></div>
+                              <div cdkDropList id="openList" #openList="cdkDropList" [cdkDropListData]="OpenTaskList"
+                                [cdkDropListConnectedTo]="[progresList,doneList]" class="item-list"
+                                (cdkDropListDropped)="drop($event)">
+                                <div class="item-box"
+                                  *ngFor="let t of OpenTaskList |   filter: taskSearch | taskByStatus: checked() : false | slice:0:openShowMoreTaskList; let i=index"
+                                  cdkDrag>
+
+
+                                  <pre (click)="editTaskDialog(t)" class="desc-space"
+                                    [innerHTML]="(add3Dots(t.taskDescription,250)) |  noSanitize">{{add3Dots(t.taskDescription,250)}}</pre>
+                                  <div class="row">
+                                    <div class="col-3">
+                                      <!-- [ngClass]="{'inProgressstatus':t.taskStatus == 'In Progress','doneStatus':t.taskStatus == 'Done'}" -->
+                                      <mat-icon matTooltipClass='status-tooltip' matTooltip="{{tooltipTaskStatusOpen}}"
+                                      (mouseenter)="getStatusTooltip1(t)" aria-hidden="false" matTooltip="Task status"
+                                        (click)="taskStatusValue(t)" [ngClass]="t.isTaskOverDue === true ? 'overDueColor': 'taskIconColor'"
+                                        class="pt-2 pointer mat-primary mx-2 bd-highlight d-inline-block"
+                                        color="primary" aria-label="Example home icon" #ddTrigger="matMenuTrigger"
+                                        [matMenuTriggerFor]="ss">
+                                        <!-- [class.overDueColor]="t.isTaskOverDue == true" -->
+                                        <!--  -->
+                                        flag
+                                      </mat-icon>
+                                      <mat-menu #ss="matMenu" [overlapTrigger]="false">
+                                        <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+                                          <!-- <ng-select [virtualScroll]="true" [items]="dataList" bindValue="name"
+                                            (change)="getTaskStatusValue($event,t)" bindLabel="name"
+                                            placeholder="Select status" [searchable]="true" [clearable]="false"
+                                            [(ngModel)]="selectedStatus"></ng-select> -->
+
+                                            <!-- Rudresh Code start here (Applying mat select instead of ng select)-->
+                                            <mat-form-field class="mat-sizes">
+                                              <mat-select placeholder="Selected Status" [(value)]="selectedStatus" (selectionChange)="getTaskStatusValue($event,t)">
+                                                <mat-option *ngFor="let dl of dataList" [value]="dl.name">
+                                                  {{dl.name}}
+                                                </mat-option>
+                                              </mat-select>
+                                            </mat-form-field>
+                                            <!-- Rudresh code end here -->
+
+                                        </div>
+                                      </mat-menu>
+                                    </div>
+                                    <div class="col-3">
+                                      <div class="center-vertically" *ngIf="t.userDetails.userName else showUserMsg">
+                                        <span class="userIcon" matTooltipClass='user-tooltip'
+                                          matTooltip="{{tooltipUserNameOpen}}" (mouseenter)="getOpenUserNameTooltip(t)"
+                                          matTooltip="Assign user" #trigger="matMenuTrigger" [matMenuTriggerFor]="aa"
+                                          (click)="taskUserChange(t)">
+                                          {{t.userDetails.userName | shortName}}</span>
+                                      </div>
+                                      <mat-menu #aa="matMenu" [overlapTrigger]="false">
+                                        <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+                                          <ng-select
+                                            (change)="taskUserChangeByUser($event, t.taskId, t.taskDescription,t.taskStatus,t.taskDueDate)"
+                                            bindLabel="userName" placeholder="Select User" [searchable]="true"
+                                            [clearable]="false" [(ngModel)]="selectedUser">
+                                            <ng-option value="{{item.userId}}" *ngFor="let item of groupMemberData">
+                                              {{item.userName}}
+                                            </ng-option>
+                                            <ng-option value="">
+                                              No assignee
+                                            </ng-option>
+                                          </ng-select>
+                                        </div>
+                                      </mat-menu>
+                                      <ng-template #showUserMsg>
+                                        <div class="center-vertically">
+                                          <mat-icon class="delete2 defaultIconsClr mt-1" (click)="taskUserChange(t)"
+                                            #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="aa"
+                                            matTooltip="Assign user">
+                                            person</mat-icon>
+                                        </div>
+                                      </ng-template>
+
+                                    </div>
+                                    <div class="col-3">
+                                      <!-- // due Date -->
+                                      <mat-datepicker #picker3></mat-datepicker>
+                                      <input readonly [class.overDueColor]="t.isTaskOverDue === true" readonly
+                                        matTooltipClass='red-tooltip' matTooltip="{{tooltipDueDateOpen }}"
+                                        (mouseenter)="getOpenDueDateTooltip(t)" *ngIf="t.taskDueDate else showDeuDate"
+                                        (dateInput)="taskUserupdateByDueDate('input', $event,t)"
+                                        value="{{t.taskDueDate | date: 'MMM dd'}}" type="text" (click)="picker3.open()"
+                                        placeholder="{{t.taskDueDate | date: 'MMM dd'}}" matInput
+                                        [matDatepicker]="picker3" class="dueDateInput pt-3 pointer" />
+                                      <ng-template #showDeuDate>
+                                        <div class="center-vertically1 delete2">
+                                          <mat-icon (click)="picker3.open()" class="delete2 taskIconColor pt-2"
+                                            matTooltip="Due Date">event</mat-icon>
+                                          <mat-datepicker #picker3></mat-datepicker>
+                                          <span>
+                                            <input matTooltip="Due Date" readonly
+                                              (dateInput)="taskUserupdateByDueDate('input', $event,t)" [min]="TodayDate"
+                                              type="text" (click)="picker3.open()" matInput [matDatepicker]="picker3"
+                                              class="dueDateInput delete2" />
+                                          </span>
+                                        </div>
+                                      </ng-template>
+                                    </div>
+                                    <div class="col-3">
+                                      <button mat-icon-button [matMenuTriggerFor]="beforeTaskMenu"
+                                        aria-label="Example icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                      </button>
+                                      <mat-menu #beforeTaskMenu="matMenu" xPosition="before">
+                                        <button mat-menu-item (click)="getTaskDetailsById(t.taskId)">
+                                          <mat-icon class="delete2">visibility</mat-icon>
+                                          <span>View</span>
+                                        </button>
+                                        <button mat-menu-item (click)="deleteTask(t.taskId)">
+                                          <mat-icon class="delete2">delete</mat-icon>
+                                          <span>Delete</span>
+                                        </button>
+                                      </mat-menu>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="text-center  mt-2">
+                                  <button type="button" *ngIf="openShowMoreTaskList < OpenTaskList.length"
+                                    class="btn btn-xs border btn-default mr-1 mb-2 btn-sm track-btn-blue"
+                                    (click)="openShowMoreTask()">Show More+
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          <div class="col-md-4">
+                            <div class="drag-container">
+                              <div class="section-headingInprogres" *ngIf="offsetFlag">In Progress <span class="widgetCount">{{InProgressTaskList.length}}</span></div>
+                              <div class="section-headingInprogres1" *ngIf="!offsetFlag"></div>
+                              <div cdkDropList id="progresList" #progresList="cdkDropList"
+                                [cdkDropListData]="InProgressTaskList" [cdkDropListConnectedTo]="[openList,doneList]"
+                                class="item-list" (cdkDropListDropped)="drop($event)">
+                                <div class="item-box"
+                                  *ngFor="let t of InProgressTaskList |   filter: taskSearch | taskByStatus: checked() : false | slice:0:inProgressShowMoreTaskList; let i=index"
+                                  cdkDrag>
+                                  <pre (click)="editTaskDialog(t)" class="desc-space"
+                                    [innerHTML]="(add3Dots(t.taskDescription,250)) |  noSanitize">{{add3Dots(t.taskDescription,250)}}</pre>
+                                  <div class="row">
+                                    <div class="col-3">
+                                      <!-- [ngClass]="{'overDueColor':t.isTaskOverDue == true,
+                                                'inProgressstatus':t.taskStatus == 'In Progress',
+                                                'doneStatus':t.taskStatus == 'Done'
+                                              }" -->
+                                      <mat-icon matTooltipClass='status-tooltip'
+                                        matTooltip="{{tooltipTaskStatusInprogress}}" (mouseenter)="getStatusTooltip2(t)"
+                                        aria-hidden="false" matTooltip="Task status" (click)="taskStatusValue(t)"
+                                        [ngClass]="t.isTaskOverDue === true ? 'overDueColor': 'inProgressstatus'"
+                                        class="pt-2 pointer mat-primary mx-2 bd-highlight d-inline-block"
+                                        color="primary" aria-label="Example home icon" #ddTrigger="matMenuTrigger"
+                                        [matMenuTriggerFor]="ss">
+                                        <!-- [class.overDueColor]="t.isTaskOverDue == true" -->
+                                        flag
+                                      </mat-icon>
+                                      <mat-menu #ss="matMenu" [overlapTrigger]="false">
+                                        <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+
+                                          <!-- <ng-select [items]="dataList" bindValue="name"
+                                            (change)="getTaskStatusValue($event,t)" bindLabel="name"
+                                            placeholder="Select status" [searchable]="true" [clearable]="false"
+                                            [(ngModel)]="selectedStatus"></ng-select> -->
+
+                                            <!-- Rudresh Code -->
+
+                                            <mat-form-field class="mat-sizes">
+                                              <mat-select placeholder="Selected Status" [(value)]="selectedStatus" (selectionChange)="getTaskStatusValue($event,t)">
+                                                <mat-option *ngFor="let dl of dataList" [value]="dl.name">
+                                                  {{dl.name}}
+                                                </mat-option>
+                                              </mat-select>
+                                            </mat-form-field>
+
+                                            <!-- Rudresh Code End -->
+                                        </div>
+                                      </mat-menu>
+                                    </div>
+                                    <div class="col-3">
+                                      <div class="center-vertically" *ngIf="t.userDetails.userName else showUserMsg">
+                                        <span class="userIcon" matTooltipClass='user-tooltip'
+                                          matTooltip="{{tooltipUserNameInprogress}}" (mouseenter)="getInprogressUserNameTooltip(t)"
+                                          matTooltip="Assign user" #trigger="matMenuTrigger" [matMenuTriggerFor]="aa"
+                                          (click)="taskUserChange(t)">
+                                          {{t.userDetails.userName | shortName}}</span>
+                                      </div>
+                                      <mat-menu #aa="matMenu" [overlapTrigger]="false">
+                                        <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+                                          <ng-select
+                                            (change)="taskUserChangeByUser($event, t.taskId, t.taskDescription,t.taskStatus,t.taskDueDate)"
+                                            bindLabel="userName" placeholder="Select User" [searchable]="true"
+                                            [clearable]="false" [(ngModel)]="selectedUser">
+                                            <ng-option value="{{item.userId}}" *ngFor="let item of groupMemberData">
+                                              {{item.userName}}
+                                            </ng-option>
+                                            <ng-option value="">
+                                              No assignee
+                                            </ng-option>
+                                          </ng-select>
+                                        </div>
+                                      </mat-menu>
+                                      <ng-template #showUserMsg>
+                                        <div class="center-vertically">
+                                          <mat-icon class="delete2 defaultIconsClr mt-1" (click)="taskUserChange(t)"
+                                            #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="aa"
+                                            matTooltip="Assign user">
+                                            person</mat-icon>
+                                        </div>
+                                      </ng-template>
+
+                                    </div>
+                                    <div class="col-3">
+                                      <!-- // due Date -->
+                                      <mat-datepicker #picker3></mat-datepicker>
+                                      <input readonly [class.overDueColor]="t.isTaskOverDue === true" readonly
+                                        matTooltipClass='red-tooltip' matTooltip="{{tooltipDueDateInprogress }}"
+                                        (mouseenter)="getInProgressDueDateTooltip(t)"
+                                        *ngIf="t.taskDueDate else showDeuDate"
+                                        (dateInput)="taskUserupdateByDueDate('input', $event,t)"
+                                        value="{{t.taskDueDate | date: 'MMM dd'}}" type="text" (click)="picker3.open()"
+                                        placeholder="{{t.taskDueDate | date: 'MMM dd'}}" matInput
+                                        [matDatepicker]="picker3" class="dueDateInput pt-3 pointer" />
+                                      <ng-template #showDeuDate>
+                                        <div class="center-vertically1 delete2">
+                                          <mat-icon (click)="picker3.open()" class="delete2 taskIconColor pt-2"
+                                            matTooltip="Due Date">event</mat-icon>
+                                          <mat-datepicker #picker3></mat-datepicker>
+                                          <span>
+                                            <input matTooltip="Due Date" readonly
+                                              (dateInput)="taskUserupdateByDueDate('input', $event,t)" [min]="TodayDate"
+                                              type="text" (click)="picker3.open()" matInput [matDatepicker]="picker3"
+                                              class="dueDateInput delete2" />
+                                          </span>
+                                        </div>
+                                      </ng-template>
+                                    </div>
+                                    <div class="col-1">
+                                      <button mat-icon-button [matMenuTriggerFor]="beforeTaskMenu"
+                                        aria-label="Example icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                      </button>
+                                      <mat-menu #beforeTaskMenu="matMenu" xPosition="before">
+                                        <button mat-menu-item (click)="getTaskDetailsById(t.taskId)">
+                                          <mat-icon class="delete2">visibility</mat-icon>
+                                          <span>View</span>
+                                        </button>
+                                        <button mat-menu-item (click)="deleteTask(t.taskId)">
+                                          <mat-icon class="delete2">delete</mat-icon>
+                                          <span>Delete</span>
+                                        </button>
+                                      </mat-menu>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="text-center  mt-2">
+                                  <button type="button" *ngIf="inProgressShowMoreTaskList < InProgressTaskList.length"
+                                    class="btn btn-xs border btn-default mr-1 mb-2 btn-sm track-btn-blue"
+                                    (click)="inProgressShowMoreTask()">Show More+
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="drag-container">
+                              <div class="section-headingDone" *ngIf="offsetFlag">Done <span class="widgetCount">{{DoneTaskList.length}}</span> </div>
+                              <div class="section-headingDone1" *ngIf="!offsetFlag"></div>
+                              <div cdkDropList id="doneList" #doneList="cdkDropList" [cdkDropListData]="DoneTaskList"
+                                [cdkDropListConnectedTo]="[progresList,openList]" class="item-list"
+                                (cdkDropListDropped)="drop($event)">
+                                <div class="item-box"
+                                  *ngFor="let t of DoneTaskList   | filter: taskSearch | taskByStatus: checked() : false | slice:0:doneShowMoreTaskList; let i=index"
+                                  cdkDrag>
+                                  <pre (click)="editTaskDialog(t)" class="desc-space"
+                                    [innerHTML]="(add3Dots(t.taskDescription,250)) |  noSanitize">{{add3Dots(t.taskDescription,250)}} </pre>
+                                  <div class="row">
+                                    <div class="col-3">
+                                      <mat-icon [ngClass]="{
+                                              'inProgressstatus':t.taskStatus == 'In Progress',
+                                              'doneStatus':t.taskStatus == 'Done'
+                                            }" matTooltipClass='status-tooltip' matTooltip="{{tooltipTaskStatusDone}}"
+                                            (mouseenter)="getStatusTooltip3(t)" aria-hidden="false"
+                                        (click)="taskStatusValue(t)"
+                                        class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                        color="primary" aria-label="Example home icon" #ddTrigger="matMenuTrigger"
+                                        [matMenuTriggerFor]="ss" [class.overDueColor]="t.isTaskOverDue == true">
+                                        flag
+                                      </mat-icon>
+                                      <mat-menu #ss="matMenu" [overlapTrigger]="false">
+                                        <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+                                          <ng-select [items]="dataList" bindValue="name"
+                                            (change)="getTaskStatusValue($event,t)" bindLabel="name"
+                                            placeholder="Select status" [searchable]="true" [clearable]="false"
+                                            [(ngModel)]="selectedStatus"></ng-select>
+                                        </div>
+                                      </mat-menu>
+                                    </div>
+                                    <div class="col-3">
+                                      <div class="center-vertically" *ngIf="t.userDetails.userName else showUserMsg">
+                                        <span class="userIcon" matTooltipClass='user-tooltip'
+                                          matTooltip="{{tooltipUserNameDone}}" (mouseenter)="getDoneUserNameTooltip(t)"
+                                          matTooltip="Assign user" #trigger="matMenuTrigger" [matMenuTriggerFor]="aa"
+                                          (click)="taskUserChange(t)">
+                                          {{t.userDetails.userName | shortName}}</span>
+                                      </div>
+                                      <mat-menu #aa="matMenu" [overlapTrigger]="false">
+                                        <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+                                          <ng-select
+                                            (change)="taskUserChangeByUser($event, t.taskId, t.taskDescription,t.taskStatus,t.taskDueDate)"
+                                            bindLabel="userName" placeholder="Select User" [searchable]="true"
+                                            [clearable]="false" [(ngModel)]="selectedUser">
+                                            <ng-option value="{{item.userId}}" *ngFor="let item of groupMemberData">
+                                              {{item.userName}}
+                                            </ng-option>
+                                            <ng-option value="">
+                                              No assignee
+                                            </ng-option>
+                                          </ng-select>
+                                        </div>
+                                      </mat-menu>
+                                      <ng-template #showUserMsg>
+                                        <div class="center-vertically">
+                                          <mat-icon class="delete2 defaultIconsClr mt-1" (click)="taskUserChange(t)"
+                                            #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="aa"
+                                            matTooltip="Assign user">
+                                            person</mat-icon>
+                                        </div>
+                                      </ng-template>
+
+                                    </div>
+                                    <div class="col-3">
+                                      <!-- // due Date -->
+                                      <mat-datepicker #picker3></mat-datepicker>
+                                      <input *ngIf="t.taskDueDate else showDeuDate" readonly
+                                        [class.overDueColor]="t.isTaskOverDue === true" matTooltipClass='red-tooltip'
+                                        matTooltip="{{tooltipDueDateDone}}" (mouseenter)="getDoneDueDateTooltip(t)"
+                                        (dateInput)="taskUserupdateByDueDate('input', $event,t)"
+                                        value="{{t.taskDueDate | date: 'MMM dd'}}" type="text" (click)="picker3.open()"
+                                        placeholder="{{t.taskDueDate | date: 'MMM dd'}}" matInput
+                                        [matDatepicker]="picker3" class="dueDateInput pt-3 pointer" />
+                                      <ng-template #showDeuDate>
+                                        <div class="center-vertically1 delete2">
+                                          <mat-icon (click)="picker3.open()" class="delete2 taskIconColor pt-2"
+                                            matTooltip="Due Date">event</mat-icon>
+                                          <mat-datepicker #picker3></mat-datepicker>
+                                          <span>
+                                            <input matTooltip="Due Date" readonly
+                                              (dateInput)="taskUserupdateByDueDate('input', $event,t)" [min]="TodayDate"
+                                              type="text" (click)="picker3.open()" matInput [matDatepicker]="picker3"
+                                              class="dueDateInput delete2" />
+                                          </span>
+                                        </div>
+                                      </ng-template>
+                                    </div>
+                                    <div class="col-1">
+                                      <button mat-icon-button [matMenuTriggerFor]="beforeTaskMenu"
+                                        aria-label="Example icon-button with a menu">
+                                        <mat-icon>more_vert</mat-icon>
+                                      </button>
+                                      <mat-menu #beforeTaskMenu="matMenu" xPosition="before">
+                                        <button mat-menu-item (click)="getTaskDetailsById(t.taskId)">
+                                          <mat-icon class="delete2">visibility</mat-icon>
+                                          <span>View</span>
+                                        </button>
+                                        <button mat-menu-item (click)="deleteTask(t.taskId)">
+                                          <mat-icon class="delete2">delete</mat-icon>
+                                          <span>Delete</span>
+                                        </button>
+                                        <button mat-menu-item (click)="ClosedTask(t.taskId)">
+                                          <mat-icon class="delete2">done</mat-icon>
+                                          <span>Close task</span>
+                                        </button>
+                                      </mat-menu>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="text-center  mt-2">
+                                  <button type="button" *ngIf="doneShowMoreTaskList < DoneTaskList.length"
+                                    class="btn btn-xs border btn-default mr-1 mb-2 btn-sm track-btn-blue"
+                                    (click)="doneShowMoreTask()">Show More+
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </mat-tab>
+
+                      <!-- //borad tab end  -->
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">list</mat-icon>&nbsp;
+                          List
+                        </ng-template>
+                        <div class="row " *ngIf="isDisplayed">
+                          <!-- <div class="col-xl-3 col-lg-3 col-md-3 col-sm-8 col-12 pt-1">
+                            <ng-select [(ngModel)]="globalSelectedGroup" (change)="getGroupFromDropDown($event)"
+                              bindValue="groupName" bindLabel="groupName" class="headerPanel test" [items]="GroupData"
+                              placeholder="Select Group" [searchable]="true" [clearable]="true">
+                              <ng-template ng-header-tmp>
+                              </ng-template>
+                            </ng-select>
+                          </div> -->
+                          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 pt-2">
+                            <!-- <mat-icon color="primary" class="addTaskBtn" (click)="quickAddForm()">add</mat-icon> -->
+                          </div>
+                          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-4 col-12">
+                            <div class="card-body headerPanel iconPanel">
+                              <mat-icon color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="filterPanel" matTooltip="Filter">
+                                filter_alt</mat-icon>
+                              <mat-menu #filterPanel="matMenu" class="mat-menu-panel-filter">
+                                <mat-tab-group (click)="stopPropagationFilterPanel($event)">
+                                  <mat-tab label="Search by Text">
+                                    <div class="card-body cardPadding">
+                                      <div class="row">
+                                        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-12">
+                                          <div class="input-group mb-4 border rounded-pill p-1">
+                                            <div class="input-group-prepend border-0">
+                                              <button id="button-addon4" type="button"
+                                                class="btn btn-link text-primary">
+                                                <i class="fa fa-search iconColor"></i>
+                                              </button>
+                                            </div>
+                                            <input type="search" placeholder="Search task" [(ngModel)]="taskSearch"
+                                              name="search" autocomplete="off" aria-describedby="button-addon4"
+                                              class="form-control bg-none border-0">
+                                          </div>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+                                          <button color="primary" matTooltip="Close panel" (click)="closedSearchPanel()"
+                                            mat-button>
+                                            <mat-icon>clear</mat-icon>
+                                          </button>
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                  </mat-tab>
+                                  <mat-tab label="Search by Status">
+                                    <div class="row">
+                                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <section class="example-section  form-inline ml-5 pl-2">
+                                          <div *ngFor="let s of dataListpipeFilteer;let i = index">
+                                            <input type="checkbox" class="example-margin " #ref [checked]="s.checked"
+                                              [(ngModel)]="s.checked"
+                                              (click)="getCheckBoxVAlue(s.id, dataListpipeFilteer)" />
+                                            {{s.name}}
+                                          </div>
+                                          <button type="button" class=" ml-3 " (click)="unCheckAll()" mat-stroked-button
+                                            color="primary"> Clear filter</button>
+
+                                        </section>
+                                        <pre><span *ngFor="let s of checked()" style="padding-right:10px;"></span></pre>
+                                      </div>
+                                    </div>
+                                  </mat-tab>
+                                  <mat-tab label="Custom Filter">
+                                    <div class="card-body customFilter">
+                                      <form [formGroup]="filterTaskListForm"
+                                        (ngSubmit)="filterTasList(filterTaskListForm)">
+                                        <div class="row">
+                                          <div class="col-xl-4 col-lg-4 col-md-4 col-6 col-sm-4 col-12">
+                                            <mat-form-field>
+                                              <mat-select formControlName="taskStatus" placeholder="Task status">
+                                                <mat-option *ngFor="let s of this.dataListSearchFilter;let i = index"
+                                                  value="{{s.name}}">
+                                                  {{s.name}}</mat-option>
+                                              </mat-select>
+                                            </mat-form-field>
+                                          </div>
+                                          <div class="col-xl-4 col-lg-4 col-md-4 col-6 col-sm-4 col-12">
+                                            <mat-form-field>
+                                              <mat-select formControlName="taskAssignTo" class="userInput"
+                                                placeholder="Assign user" matTooltip="Assign Users">
+                                                <mat-option *ngFor="let user of groupMemberData"
+                                                  value="{{user.userId}}">
+                                                  {{user.userName}}
+                                                </mat-option>
+                                              </mat-select>
+                                            </mat-form-field>
+                                          </div>
+                                          <div class="col-xl-4 col-lg-4 col-md-4 col-4 col-sm-4 col-8">
+                                            <mat-form-field appearance="fill" class="dueDate">
+                                              <mat-label>Due Date</mat-label>
+                                              <input matInput [matDatepicker]="picker" formControlName="taskDueDate"
+                                                (click)="picker.open()">
+                                              <mat-datepicker-toggle matSuffix [for]="picker">
+                                              </mat-datepicker-toggle>
+                                              <mat-datepicker #picker></mat-datepicker>
+                                            </mat-form-field>
+                                          </div>
+                                        </div>
+                                        <div class="row">
+                                          <div class="col-md-8">
+                                            <div class="row">
+                                              <div class="col-xl-2 col-lg-2 col-md-2 col-4 col-sm-4">
+                                                <button type="submit" class="filterIcons" matTooltip="Search"
+                                                  color="primary" mat-button>
+                                                  <mat-icon>search</mat-icon>
+                                                </button>
+                                              </div>
+                                              <div class="col-xl-2 col-lg-2 col-md-2 col-4 col-sm-4">
+                                                <button color="primary" class="filterIcons" matTooltip="Reset filter"
+                                                  (click)="filerClear()" mat-button>
+                                                  <mat-icon>restart_alt</mat-icon>
+                                                </button>
+                                              </div>
+                                              <div class="col-xl-2 col-lg-2 col-md-2 col-4 col-sm-4">
+                                                <button color="primary" class="filterIcons" matTooltip="Close panel"
+                                                  (click)="filterPanleClosed()" mat-button>
+                                                  <mat-icon>clear</mat-icon>
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-md-4">
+                                            <div class="row">
+                                              <div class="col-xl-5 col-lg-5 col-md-5 col-3 col-sm-3">
+                                                <button type="button" (click)="getMyTasks()" mat-stroked-button
+                                                  color="primary">My
+                                                  Task</button>
+                                              </div>
+                                              <div class="col-xl-5 col-lg-5 col-md-5 col-3 col-sm-3">
+                                                <button type="button" (click)="getAlltaskList()" mat-stroked-button
+                                                  color="primary">Show All</button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </form>
+                                    </div>
+                                  </mat-tab>
+
+                                </mat-tab-group>
+                              </mat-menu>
+
+                              <mat-icon color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="tetgr"
+                                matTooltip="Remove users from group">person_remove</mat-icon>
+
+                              <mat-menu #tetgr="matMenu" [overlapTrigger]="false">
+                                <div (click)="cancelRemoveClick($event)" class="dropdown1"
+                                  *ngFor="let seting of collection.data;let i = index">
+                                  <div class="fixed-header">
+                                    <nav>
+                                      Group members
+                                    </nav>
+                                  </div>
+                                  <div class="removeUserList">
+                                    <mat-list role="list" *ngFor="let gm of groupMemberData">
+                                      <div class="row">
+                                        <div class="col-lg-10 col-md-10 col-xs-10">
+                                          <mat-list-item role="listitem" class="pt-3">
+                                            <div *ngIf="gm.isGroupOwner === true; else OwnerTemp">
+                                              {{gm.userName}}
+                                              <mat-card-subtitle>(Owner) </mat-card-subtitle>
+                                            </div>
+                                            <ng-template #OwnerTemp>
+                                              {{gm.userName}}</ng-template>
+                                          </mat-list-item>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-xs-2">
+                                          <div *ngIf="gm.isGroupOwner === true; else deleteBlock">
+                                            <button class="delete" [hidden]="gm.isGroupOwner === true"
+                                              (click)="fireDeleteEventUser(gm.groupMemberId)">
+                                              <!-- Adding Mat Icon via svg due to select bug -->
+                                              <svg fill="#cccccc" height="24" viewBox="0 0 24 24" width="24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M0 0h24v24H0V0z" fill="none" />
+                                                <path
+                                                  d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                                                <path d="M0 0h24v24H0z" fill="none" />
+                                              </svg>
+                                            </button>
+                                          </div>
+                                          <ng-template #deleteBlock>
+                                            <div *ngIf="isGroupAdmin === false; else deletetempBlock">
+                                              <button class="delete deleteBtn"
+                                                (click)="fireDeleteEventUser(gm.groupMemberId)">
+                                                <!-- Adding Mat Icon via svg due to select bug -->
+                                                <svg fill="#cccccc" height="24" viewBox="0 0 24 24" width="24"
+                                                  xmlns="http://www.w3.org/2000/svg">
+                                                  <path d="M0 0h24v24H0V0z" fill="none" />
+                                                  <path
+                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                                                  <path d="M0 0h24v24H0z" fill="none" />
+                                                </svg>
+                                              </button>
+                                            </div>
+                                            <ng-template #deletetempBlock>
+                                              <button class="delete " (click)="fireDeleteEventUser(gm.groupMemberId)">
+                                                <svg fill="#cccccc" height="24" viewBox="0 0 24 24" width="24"
+                                                  xmlns="http://www.w3.org/2000/svg">
+                                                  <path d="M0 0h24v24H0V0z" fill="none" />
+                                                  <path
+                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                                                  <path d="M0 0h24v24H0z" fill="none" />
+                                                </svg>
+                                              </button>
+                                            </ng-template>
+                                          </ng-template>
+                                        </div>
+                                      </div>
+                                    </mat-list>
+                                  </div>
+                                </div>
+                              </mat-menu>
+
+                              <mat-icon *ngIf="(systemSettingIcon)" color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                matTooltip="Add/Invite Users" [matMenuTriggerFor]="inviteMenu">
+                                person_add
+                              </mat-icon>
+                              <mat-menu #inviteMenu="matMenu">
+                                <div class="dropdown1">
+                                  <div class="card">
+                                    <!-- <div class="card-header fixed-header">
+                                        <h2>Add/Invite Users </h2>
+                                      </div> -->
+                                    <div class="fixed-header-invite-user">
+                                      <nav>
+                                        Add/Invite Users....
+                                      </nav>
+                                    </div>
+                                    <div class="card-body invitePanel" (click)="stopPropagationAddmember($event)">
+                                      <form [formGroup]="addGroupNewMembersForm"
+                                        (ngSubmit)="addGroupMembers(addGroupNewMembersForm)">
+                                        <div class="form-group">
+                                          <ng-select [ngClass]="{ 'is-invalid': submitted && u.userEmail.errors }"
+                                            [items]="newMembers" formControlName="userEmail" bindValue="userEmail"
+                                            bindLabel="userEmail" placeholder="Select Users and add Users"
+                                            multiple="true" [addTag]="true" [searchable]="true" [clearable]="true">
+                                            <ng-template ng-header-tmp>
+                                              <div>
+                                                <button mat-button color="primary" (click)="onSelectAllInvite()">Select
+                                                  All</button>
+                                                <button mat-button color="primary" (click)="onClearAllInvite()">Clear
+                                                  All</button>
+                                              </div>
+                                            </ng-template>
+                                          </ng-select>
+                                        </div>
+                                        <div class="text-center mb-2">
+                                          <button type="submit" [disabled]="loadingBtn" disabled
+                                            class=" btn btn-xs border btn-default mr-1 track-btn-blue">
+                                            Save
+                                          </button>
+                                          <!-- <button type="button" (click)="addGroupCancel()"
+                                            class="btn btn-xs border btn-default">Cancel</button> -->
+                                        </div>
+
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </mat-menu>
+                              <mat-icon *ngIf="(systemSettingIcon)" color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                (click)="onReminder()" matTooltip="Task reminder to group members">
+                                contact_mail
+                              </mat-icon>
+                              <mat-icon *ngIf="(systemSettingIcon)" color="primary"
+                                class="pt-2 pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+                                #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="dd" matTooltip="Application settings ">
+                                settings_applications</mat-icon>
+                              <mat-menu #dd="matMenu" [overlapTrigger]="false">
+                                <div (click)="cancelClick($event)" class="dropdownSystem" style="padding: 13px;"
+                                  *ngFor="let seting of collection.data;let i = index">
+                                  <div style="text-transform: capitalize;">{{seting.emailpreferences}}</div>
+                                  <mat-slide-toggle color="primary"
+                                    *ngFor="let s of seting.systemSettingsData;let i = index" [checked]="isChecked"
+                                    #toggleElement [(ngModel)]="isChecked" (change)="onChange($event.checked,seting)">
+                                    Send Email to Assigned Users
+                                  </mat-slide-toggle>
+                                </div>
+                              </mat-menu>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row" *ngIf="isDisplayed">
+                          <div class="col-12 col-md-12">
+                            <div *ngIf="quickAddTaskForm">
+                              <div class="">
+                                <form [formGroup]="AddTaskForm" (ngSubmit)="onSubmitAddQuickTask()" novalidate>
+                                  <div class="row">
+                                    <div class="col-4">
+                                      <input type="text" placeholder="Task"
+                                        [ngClass]="{ 'is-invalid': submitted && q.taskDescription.errors }"
+                                        formControlName="taskDescription" class="form-control">
+                                    </div>
+                                    <div class="col-2">
+                                      <mat-datepicker #picker2></mat-datepicker>
+                                      <input type="text" readonly placeholder="End Due Date" (click)="picker2.open()"
+                                        formControlName="taskDueDate" matInput [matDatepicker]="picker2"
+                                        class="form-control inputBorder" />
+                                    </div>
+                                    <div class="col-2">
+                                      <ng-select formControlName="userId" bindLabel="userId" placeholder="Select User"
+                                        [searchable]="true" [clearable]="true">
+                                        <ng-option value="{{u.userId}}"
+                                          *ngFor="let u of groupMemberData; let i = index">
+                                          <option>{{u.userName}}</option>
+                                        </ng-option>
+                                      </ng-select>
+                                    </div>
+                                    <div class="col-1">
+                                      <button type="submit" [disabled]="loadingBtn" disabled
+                                        class="btn btn-xs border btn-default mr-1 track-btn-blue">Save</button>
+                                    </div>
+                                    <div class="col-1 form-control">
+                                      <mat-icon aria-hidden="false" matTooltip="Close form"
+                                        (click)="closeQuikcAddForm()" class="taskIconColor" color="primary"
+                                        aria-label="Example home icon">close</mat-icon>
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                            <!-- //ui task list -->
+                            <div class="itemList">
+                              <app-task-list (sendTaskList)="groupTaskList = $event"
+                                *ngFor="let t of groupTaskList |   filter: taskSearch | taskByStatus: checked() : false | slice:0:showMoreTaskList; let i=index"
+                                [t]="t"></app-task-list>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-12 col-sm-12 text-center">
+                              <button type="button" *ngIf="showMoreTaskList < groupTaskList.length"
+                                class="text-center btn btn-xs border btn-default mr-1 mb-2 btn-sm track-btn-blue"
+                                (click)="showMoreTask()">Show More Task+
+                              </button>
+                            </div>
+                            <!-- //ui task list end-->
+                          </div>
+                        </div>
+                      </mat-tab>
+
+                      <!-- //List tab end  -->
+
+
+                      <!--  closed task list tab start -->
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">list</mat-icon>&nbsp;
+                          Closed tasks
+                        </ng-template>
+                        <div class="itemList">
+                          <div class="row " *ngIf="isDisplayed">
+                            <div class="col-3 pt-1">
+                            </div>
+                            <div class="col-9 pt-1">
+                              <input type="search" [(ngModel)]="searchTaskTerm" placeholder="Search tasks..."
+                                aria-describedby="button-addon4" class="form-control bg-none " />
+                            </div>
+                          </div>
+                          <app-closed-task-list (sendTaskList)="groupTaskList = $event"
+                            *ngFor="let t of groupTaskList |   filter: taskSearch | taskByStatus: checked() : false | slice:0:showMoreTaskList | filter:searchTaskTerm; let i=index"
+                            [t]="t"></app-closed-task-list>
+                        </div>
+
+                      </mat-tab>
+                      <!-- closed task lsit tab end  -->
+
+                      <ng-template mat-tab-label>
+                        <ng-select [(ngModel)]="globalSelectedGroup" (change)="getGroupFromDropDown($event)"
+                          bindValue="groupName" bindLabel="groupName" class="headerPanel test" [items]="GroupData"
+                          placeholder="Select Group" [searchable]="true" [clearable]="true">
+                          <ng-template ng-header-tmp>
+                          </ng-template>
+                        </ng-select>
+                      </ng-template>
+                    </mat-tab-group>
+
+
+
+                    <!-- <div class="col-xl-12 col-lg-12 col-md-12 col-12 col-sm-12 text-center"> -->
+                    <!-- <button type="button" *ngIf="showMoreTaskList < groupTaskList.length"
+                        class="text-center btn btn-xs border btn-default mr-1 mb-2 btn-sm track-btn-blue"
+                        (click)="showMoreTask()">Show More Task+
+                      </button> -->
+                    <!-- </div> -->
+
+                  </ng-container>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </nav>
+
+
+  </div>
+</div>
+<div class="addBtn" (click)="addTask()">
+  <mat-icon color="default">add</mat-icon>Task
+</div>
+<div class="textAddBtn" (click)="openTextCopy()">
+  <mat-icon matTooltip="Add text copy todo task" color="default">post_add</mat-icon>
+</div>
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<!-- Popper.JS -->
+<!-- Bootstrap JS -->
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#sidebarCollapse').on('click', function () {
+      $('#sidebar').toggleClass('active');
+      $(this).toggleClass('active');
+    });
+  });
+
+</script>

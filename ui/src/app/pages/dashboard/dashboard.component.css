@@ -1,0 +1,57 @@
+mat-card {
+  max-width: 400px;
+  margin: 2em auto;
+  text-align: center;
+}
+.signin-content {
+  padding: 12px 1rem;
+}
+.full-width-input {
+  width: 100%;
+}
+
+.cardTopBlock .card {
+  overflow: hidden;
+}
+
+.cardTopBlock .card-block {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding-left: 7px;
+}
+.cardTopBlock .card-block .rotate {
+  z-index: 8;
+  float: right;
+  height: 100%;
+}
+
+.cardTopBlock .card-block .rotate i {
+  color: rgba(20, 20, 20, 0.15);
+  position: absolute;
+  left: 0;
+  left: auto;
+  right: -10px;
+  bottom: 0;
+  display: block;
+  -webkit-transform: rotate(-44deg);
+  -moz-transform: rotate(-44deg);
+  -o-transform: rotate(-44deg);
+  -ms-transform: rotate(-44deg);
+  transform: rotate(-44deg);
+}
+.display-1 {
+  font-size: 6rem;
+  font-weight: 300;
+  line-height: 1.1;
+  color: white;
+}
+.cardTopBlock .card-block h6 {
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.bgColor{
+  background-color: #cac5c526
+}

@@ -1,0 +1,106 @@
+.userDropDown{
+  padding-left: 0px;
+}
+
+.taskError{
+  text-align: center;
+  color: #eb3434;
+  font-weight: 500;
+  padding-top: 20px;
+}
+.taskOption{
+  cursor: pointer;
+  }
+  .chipColorDueDate{
+    background-color: #ffffff !important;
+    color: rgb(87, 85, 85) !important;
+  }
+  .chipColorStatus{
+    background-color: #ffffff !important;
+    color: rgb(87, 85, 85) !important;
+  }
+  .highlight{
+    color: #42A948; /* green */
+    font-weight: bold
+  }
+  .taskListfont{
+    font-size: 12px;
+  }
+  .userList{
+    overflow-x: hidden !important;
+    overflow-y: auto;
+    /* height: 440px; */
+  }
+  ::ng-deep .mat-tab-body-content {
+    height: 100%;
+    overflow: auto;
+    overflow-x: hidden !important;
+}
+.list-group-item {
+  position: relative;
+  display: block;
+  padding: 0.25rem 0.75rem !important;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+.myTaskChip {
+  color: #fff;
+  font-size: 11px;
+}
+::ng-deep .mat-standard-chip {
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 0px !important;
+  align-items: center;
+  cursor: default;
+  min-height: 16px !important;
+  height: 0px !important;
+}
+.overDueColor{
+  /* background-color: #c04747 !important; */
+  color: #c04747 !important;
+}
+.inProgressstatus{
+  color: #ffbf00 !important;
+  }
+  .doneStatus{
+    color: #008000 !important;
+  }
+  .userStatusDropDown{
+    padding: 19px;
+    width: 248px;
+    height: 164px;
+}
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #09b3db;
+}
+
+.myTaskList{
+  overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 264px;
+}
+.fixTableHead {
+  overflow-y: auto;
+  height: 304px;
+}
+.fixTableHead thead th {
+  position: sticky;
+  top: 0;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th,
+td {
+  padding: 8px 15px;
+}
+th {
+}
+
+.overDueTask{
+  border-left: 4px solid #f44336;
+}

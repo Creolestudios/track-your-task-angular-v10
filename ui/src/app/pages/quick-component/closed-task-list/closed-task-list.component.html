@@ -1,0 +1,31 @@
+
+<ul class="list-group animate__fadeInDownBig animate__delay-2s">
+  <li class="list-group-item " *ngIf="t.isClosed == true">
+    <div class="row ">
+      <div class="col-11 pointer" (click)="editTaskDialog(t)">
+        <pre class="desc-space"
+          [innerHTML]="(add3Dots(t.taskDescription,250)) |  noSanitize">{{add3Dots(t.taskDescription,250)}}</pre>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-2 col-2">
+        <div class="center-vertically" *ngIf="t.taskStatus">
+          <mat-icon aria-hidden="false" [ngClass]="{
+            'inProgressstatus':t.taskStatus == 'In Progress',
+            'doneStatus':t.taskStatus == 'Done'
+          }" matTooltipClass='status-tooltip' matTooltip="{{tooltipTaskStatus}}" [tooltip]="getStatusTooltip(t)"
+            (click)="taskStatusValue(t)" class=" pointer taskIconColor mat-primary mx-2 bd-highlight d-inline-block"
+            color="primary" aria-label="Example home icon" #ddTrigger="matMenuTrigger" [matMenuTriggerFor]="ss"
+            [class.overDueColor]="t.isTaskOverDue == true" [class.overDueColor]="t.isTaskOverDue == true">flag
+          </mat-icon>
+        </div>
+        <mat-menu #ss="matMenu" [overlapTrigger]="false">
+          <div (click)="cancelRemoveClick($event)" class="userTaskDropDown">
+            <ng-select [items]="dataList" bindValue="name" (change)="getTaskStatusValue($event,t)" bindLabel="name"
+              placeholder="Select status" [searchable]="true" [clearable]="false" [(ngModel)]="selectedStatus">
+            </ng-select>
+          </div>
+        </mat-menu>
+      </div>
+    </div>
+  </li>
+
+</ul>

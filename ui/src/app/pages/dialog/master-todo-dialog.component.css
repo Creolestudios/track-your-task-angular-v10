@@ -1,0 +1,46 @@
+.taskDesc{
+    padding: 6px;
+    border-bottom: 2px solid #1611e9;
+    width: 12%;
+}
+.taskDesc1{
+    /* padding: 6px; */
+    padding: 3px;
+    border-bottom: 3px solid #09b3db;
+  }
+  pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 /
+    white-space: -moz-pre-wrap;  / Mozilla, since 1999 /
+    white-space: -pre-wrap;      / Opera 4-6 /
+    white-space: -o-pre-wrap;    / Opera 7 /
+    word-wrap: break-word;       / Internet Explorer 5.5+ */
+    font-family:inherit;
+    font-size:inherit;
+  }
+  .iconsPadding{
+    padding: 4px;
+  }
+  .infoinLIne{
+    display: inline-flex;
+  }
+.task-description-box{
+  max-height: 400px;
+  overflow-y: auto;
+}
+.taskIconColor{
+  color:#6c757d !important;
+}
+.taskIconColor:hover{
+  color: #0745b1 !important;
+}
+.overDueColor{
+  color:  #ff0000 !important;
+  font-weight: 600;
+}
+.userInfoColor{
+  color: #212529;
+}
+.inner-div{
+  height: 350px;
+  overflow:auto;
+}
